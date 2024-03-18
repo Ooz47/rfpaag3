@@ -1,0 +1,17 @@
+uuid: f8571cc4-fef2-4832-8dd1-b141d98888d3
+langcode: fr
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Formation
+type: formation
+description: ''
+help: ''
+new_revision: true
+preview_mode: 0
+display_submitted: false

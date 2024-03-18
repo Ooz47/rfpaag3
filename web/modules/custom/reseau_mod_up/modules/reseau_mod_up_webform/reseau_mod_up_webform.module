@@ -1,0 +1,449 @@
+<?php
+
+/**
+ * @file
+ * Contains reseau_mod_up_webform.module.
+ */
+
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
+use Drupal\views\ViewExecutable;
+use Drupal\webform\Element\WebformEntitySelect;
+use Drupal\webform\WebformSubmissionInterface;
+
+/* https://drupal.stackexchange.com/questions/309741/how-can-one-use-one-webform-elements-selection-as-the-argument-in-an-entity-sel */
+
+/**
+ * Implements hook_webform_submission_form_alter().
+ */
+function reseau_mod_up_webform_webform_submission_form_alter(array &$form, FormStateInterface $form_state, $form_id)
+{
+
+  $webform_id = $form['#webform_id'] ?? '';
+  if ($webform_id == 'contact_greta_cfa_de_la_guadelou') {
+
+
+    $secteurs = $form['elements']['secteurs'] ?? [];
+    $formations = $form['elements']['formations'] ?? [];
+
+    if (!$secteurs || !$formations || empty($formations['#selection_settings']['view'])) {
+      return;
+    }
+
+    // Settings ajax related properties.
+    $formations_wrapper_id = $formations['#webform_id'] . '--wrapper';
+    $secteurs['#ajax'] = [
+      'callback' => 'reseau_mod_up_webform_webform_submission_form_secteurs_ajax_callback',
+      'wrapper' => $formations_wrapper_id,
+    ];
+    $formations['#prefix'] = '<div id="' . $formations_wrapper_id . '">';
+    $formations['#suffix'] = '</div>';
+
+    $formation_post = Xss::filter(\Drupal::request()->get('formations'));
+    $secteur_post = Xss::filter(\Drupal::request()->get('secteurs'));
+
+    if ($secteur_post) {
+      $selected_secteur = $secteur_post;
+
+      // dsm($form['elements']['objet_select']);
+      //  unset($secteurs['#states']); 
+      //  unset($formations['#states']); 
+      $formations['#default_value'] = $formation_post;
+
+      $formation_get = Xss::filter(\Drupal::request()->query->get('formations'));
+    $secteur_get = Xss::filter(\Drupal::request()->query->get('secteurs'));
+    if ($secteur_get) {
+      $secteurs['#attributes'] = array('disabled' => 'disabled');
+    }
+    if ($formation_get) {
+      $formations['#attributes'] = array('disabled' => 'disabled');
+    }
+  
+   
+    } else {
+
+
+      // Attempting to retrieve possible selected organization.
+      if (!($selected_secteur = $form_state->getValue('secteurs'))) {
+        // dsm($selected_secteur);
+        $selected_secteur = $secteurs['#default_value'] ?? 0;
+      }
+    }
+    // Apply the selected organization if a selected one was found.
+    if ($selected_secteur) {
+      // dsm($selected_secteur);
+      $formations['#selection_settings']['view']['arguments'] = [1, $selected_secteur];
+      // Reset the options so that we can repopulate it again. Without this the
+      // ::setOptions method above won't process the new arguments.
+      // }
+      //  else {
+      //   $formations['#selection_settings']['view']['arguments'] = [1,'all'];
+      //  }
+      $formations['#options'] = [];
+      $form_object = $form_state->getFormObject();
+      $settings = ['webform_submission' => $form_object->getEntity()];
+      //  dsm($settings);
+      //  dsm($formations['#options']);
+      //  dsm($form['elements']['formations']);
+      WebformEntitySelect::setOptions($formations, $settings);
+      //  dsm($formations['#options']);
+      $formations['#options']['autre'] = 'Autre...';
+      //  dsm($form['elements']['secteurs']);
+    }
+
+    $form['elements']['secteurs'] = $secteurs;
+    $form['elements']['formations'] = $formations;
+    //  dsm($form['elements']['formations']);
+    //return;
+
+    // dsm($form);
+    // dsm($form_state->getFormObject()->getEntity()->isNew());
+    // dsm($form_state->getFormObject()->getOperation());
+    //  dsm($formations);
+    /**/
+    //Si sur form modification submission
+
+    if ($form_state->getFormObject()->getOperation() == 'edit' && !$form_state->getFormObject()->getEntity()->isNew()) {
+
+      $form['elements']['captcha']['#access'] = FALSE;
+      // dsm($form);
+    }
+  }
+}
+
+/**
+ * Ajax callback for the site element.
+ *
+ * @param array $form
+ *   The full form element.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ *
+ * @return array
+ *   The site element array.
+ */
+function reseau_mod_up_webform_webform_submission_form_secteurs_ajax_callback(array $form, FormStateInterface $form_state)
+{
+  return $form['elements']['formations'];
+}
+
+
+function reseau_mod_up_webform_menu_local_tasks_alter(&$data, $route_name, \Drupal\Core\Cache\RefinableCacheableDependencyInterface &$cacheability)
+{
+  //  dsm($route_name);
+  if ($route_name == "entity.webform_submission.edit_form" || $route_name == "entity.webform_submission.canonical") {
+    foreach ($data['tabs'][0] as $key => $tab) {
+      // dsm($tab);
+
+      if ($tab['#link']['title'] == "Renvoyer") {
+
+        $data['tabs'][0][$key]['#access'] = FALSE;
+      }
+
+      //     // $data['tabs'][0][$key]['#access'] = FALSE;
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function reseau_mod_up_webform_theme()
+{
+  // $theme['webform_submission_information__contact_greta_cfa_de_la_guadelou'] = [
+  //   'base hook' => 'node',
+  // ];
+
+  $theme['webform_submission__contact_greta_cfa_de_la_guadelou'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__contact_greta_cfa_de_la_guadelou'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['field__node__gretagp_field_fmt_candidature'] = [
+    'base hook' => 'field',
+  ];
+
+    $theme['webform_submission_information__reseau'] = [
+    'base hook' => 'node'
+    ,
+  ];
+  $theme['webform_submission__contact_cfapag'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__contact_cfapag'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['field__node__cfapag_field_fmt_candidature'] = [
+    'base hook' => 'field',
+  ];
+  return $theme;
+}
+
+/* Ajout suggestion theme pour détails informations sur page vue et edit submission */
+function reseau_mod_up_webform_theme_suggestions_webform_submission_information_alter(array &$suggestions, array $variables)
+{
+
+  $suggestions[] = 'webform_submission_information__reseau';
+  // dsm($suggestions);
+}
+
+/* 
+Implements hook_theme_suggestions_HOOK_alter().
+*/
+function reseau_mod_up_webform_theme_suggestions_field_alter(array &$suggestions, array $variables)
+{
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof \Drupal\node\NodeInterface) {
+    if ($node->hasField("field_fmt_candidature")) {
+    
+      $element = $variables['element'];
+      if ($element['#field_name'] == 'field_fmt_candidature') {
+      if ($element['#object']->get('field_structure_associee')->target_id == '1') {
+        // dsm($element['#object']->get('field_structure_associee')->target_id);
+        // dsm($element->get('nid'));
+        $suggestions[] = 'field__node__gretagp_field_fmt_candidature';
+      //   $suggestions[] = 'field__node__title__page_private_' . $element['#view_mode'];
+      }
+
+      if ($element['#object']->get('field_structure_associee')->target_id == '4') {
+        // dsm($element['#object']->get('field_structure_associee')->target_id);
+        $suggestions[] = 'field__node__cfapag_field_fmt_candidature';
+      }
+      }
+    }
+  }
+}
+
+function reseau_mod_up_webform_page_attachments_alter(array &$attachments)
+{
+  /*ajoute css admin*/
+  $admin_theme = \Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = \Drupal::service('theme_handler')->getName($admin_theme);
+  if ($admin_theme_name == 'Seven') {
+    $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.webform';
+  }
+
+  $webform = \Drupal::routeMatch()->getParameter('webform');
+  if ($webform instanceof \Drupal\webform\WebformInterface) {
+
+    if ($webform->get('id') == 'pre_inscription_cfapag') {
+    
+      $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.cfapag';
+    }
+  }
+
+
+  $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.webformcustom';
+}
+
+/* Modifie lien operation sur submission fonction de l'utilisateur en cours*/
+function reseau_mod_up_webform_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity)
+{
+  // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+  // $account = \Drupal::currentUser();
+
+  // if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+  //   //juste pour tester fonctionnement, à effacer/commenter en prod
+  //   // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+  //   // return;
+  // }
+
+  if ($entity->getEntityTypeId() == 'webform_submission') {
+    if (($entity->get('webform_id')->entity->get('id') == 'contact_greta_cfa_de_la_guadelou') || ($entity->get('webform_id')->entity->get('id') == 'contact_cfapag') ) {
+
+      if (isset($operations['resend'])) {
+        unset($operations['resend']);
+      }
+      if (isset($operations['duplicate'])) {
+        unset($operations['duplicate']);
+      }
+      if (isset($operations['delete'])) {
+        unset($operations['delete']);
+      }
+      // $operations = [];
+    }
+  }
+}
+
+/**
+ * @file
+ * Hooks implemented by the reseau_mod_up_webform module.
+ */
+
+/**
+ * Implements hook_entity_operation().
+ */
+function reseau_mod_up_webform_entity_operation(EntityInterface $submission)
+{
+
+  $operations = [];
+  if ($submission instanceof WebformSubmissionInterface) {
+    // dsm($submission);
+    // dsm($submission->get('webform_id')->entity);
+    // dsm($submission->get('webform_id')->entity->get('id'));
+    if ($submission->get('webform_id')->entity->get('id') == 'contact_greta_cfa_de_la_guadelou') {
+      // if ($submission->getElementData('statut') !== 'Traité-formation') {
+
+      //   $operations['traiteformation'] = [
+      //     'title' => t('Marquer comme Traité : Entré.e en formation'),
+      //     'weight' => 15,
+      //     'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteformation', [
+      //       'submission' => $submission->id(),
+      //     ], [
+      //       'query' => \Drupal::destination()->getAsArray(),
+      //     ]),
+      //   ];
+      // }
+
+      // if ($submission->getElementData('statut') !== 'Traité-attente') {
+
+      //   $operations['traiteattente'] = [
+      //     'title' => t('Marquer comme Traité : En attente d’intégrer une formation'),
+      //     'weight' => 15,
+      //     'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteattente', [
+      //       'submission' => $submission->id(),
+      //     ], [
+      //       'query' => \Drupal::destination()->getAsArray(),
+      //     ]),
+      //   ];
+      // }
+
+      if ($submission->getElementData('statut') !== 'Traité-orienté') {
+
+        $operations['traiteoriente'] = [
+          'title' => t('Marquer comme Traité : Orienté.e vers une autre structure'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteoriente', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+      if ($submission->getElementData('statut') !== 'Traité-sélection-règlementaire') {
+
+        $operations['traiteselectionreglementaire'] = [
+          'title' => t('Marquer comme Traité : Sélection réglementaire'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteselectionreglementaire', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+
+      if ($submission->getElementData('statut') !== 'Traité-convocation-infocoll') {
+
+        $operations['traiteconvocationinfocoll'] = [
+          'title' => t('Marquer comme Traité : Convocation à une infocoll'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteconvocationinfocoll', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+      if ($submission->getElementData('statut') !== 'Traité-entretien') {
+
+        $operations['traiteentretien'] = [
+          'title' => t('Marquer comme Traité : Entretien'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteentretien', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+      if ($submission->getElementData('statut') !== 'Traité-autre') {
+
+        $operations['traiteautre'] = [
+          'title' => t('Marquer comme Traité : Autre demande'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteautredemande', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+
+      // if ($submission->getElementData('statut') !== 'En cours') {
+      //   $operations['encours'] = [
+      //     'title' => t('Marquer comme en cours'),
+      //     'weight' => 15,
+      //     'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquerencours', [
+      //       'submission' => $submission->id(),
+      //     ], [
+      //       'query' => \Drupal::destination()->getAsArray(),
+      //     ]),
+      //   ];
+      // }
+      // if ($submission->getElementData('statut') !== 'Encours-entretien') {
+      //   $operations['encoursentretien'] = [
+      //     'title' => t('Marquer comme En cours : Transmis pour entretien'),
+      //     'weight' => 15,
+      //     'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquerencourstransmisentretien', [
+      //       'submission' => $submission->id(),
+      //     ], [
+      //       'query' => \Drupal::destination()->getAsArray(),
+      //     ]),
+      //   ];
+      // }
+      // if ($submission->getElementData('statut') !== 'Encours-inscription-infocol') {
+      //   $operations['encoursinfocol'] = [
+      //     'title' => t('Marquer comme En cours : Inscription en infocol'),
+      //     'weight' => 15,
+      //     'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquerencourstransmisinfocol', [
+      //       'submission' => $submission->id(),
+      //     ], [
+      //       'query' => \Drupal::destination()->getAsArray(),
+      //     ]),
+      //   ];
+      // }
+    }
+/* POUR FORMULAIRE CONTACT CFAPAG */
+    if ($submission->get('webform_id')->entity->get('id') == 'contact_cfapag') {
+
+      if ($submission->getElementData('statut') !== 'Traité') {
+
+        $operations['traite'] = [
+          'title' => t('Marquer comme Traité'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraite', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+      if ($submission->getElementData('statut') !== 'En cours') {
+        $operations['encours'] = [
+          'title' => t('Marquer comme en cours'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquerencours', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+
+    }
+  }
+
+  return $operations;
+}
+

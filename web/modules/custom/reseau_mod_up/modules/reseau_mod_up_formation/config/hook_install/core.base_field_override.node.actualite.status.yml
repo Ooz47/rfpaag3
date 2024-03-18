@@ -1,0 +1,22 @@
+uuid: 315efa80-4f11-49bd-9fcb-515505b3209a
+langcode: fr
+status: true
+dependencies:
+  config:
+    - node.type.actualite
+id: node.actualite.status
+field_name: status
+entity_type: node
+bundle: actualite
+label: Publié
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

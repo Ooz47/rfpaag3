@@ -1,0 +1,9 @@
+#version: 1.0
+name: Sous-module Page privée
+description: Permet de créer des pages de base protégées par un mot de passe
+package: custom
+type: module
+core_version_requirement: ^9
+dependencies:
+  - reseau_mod_up:reseau_mod_up
+  - entity_access_password:entity_access_password

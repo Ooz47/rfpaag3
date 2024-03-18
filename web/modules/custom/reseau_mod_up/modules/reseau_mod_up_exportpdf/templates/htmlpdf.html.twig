@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <title>{{ title }}</title>
+    {# /* <style type="text/css">
+
+
+    </style> */ #}
+    {# <link href="{{ url('<front>')|render ~ 'themes/custom/reseau/css/formation-print.css' }}" rel="stylesheet" > #}
+    <link href="{{ url('<front>')|render ~ 'modules/custom/reseau_mod_up/modules/reseau_mod_up_exportpdf/css/formation-print.css' }}" rel="stylesheet" >
+    
+  </head>
+  <body>
+    {# langcode variable is availble #}
+    {{ content }}
+  </body>
+</html>

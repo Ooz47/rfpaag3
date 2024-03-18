@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for menu_admin_per_menu module.
+ */
+
+use Drupal\Component\Serialization\Yaml;
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * Implements hook_install().
+ */
+function reseau_mod_up_formation_install() {
+  module_set_weight('reseau_mod_up_formation', 3);
+
+    // reseau_mod_up_formation_update_8001();
+}
+
+
+function reseau_mod_up_formation_update_8001() {
+  // Machine name of the Taxonomy vocabulary.
+  $vocab = 'libelles_resultats_formations';
+
+  // Term names to be added.
+  $items = [
+    'Taux d\'insertion',
+    'Taux de réussite',
+    'Taux de rupture',
+    'Taux de satisfaction',
+    'Taux d’abandon',
+  ];
+  foreach ($items as $item) {
+    $term = Term::create(array(
+      'parent' => array(),
+      'name' => $item,
+      'vid' => $vocab,
+    ))->save();
+  }
+}

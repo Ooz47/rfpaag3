@@ -1,0 +1,19 @@
+uuid: b64796c3-5b44-4713-a1bc-0ad5b2fde43a
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_formacode
+    - node.type.formation
+id: node.formation.field_formacode
+field_name: field_formacode
+entity_type: node
+bundle: formation
+label: FormaCode
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

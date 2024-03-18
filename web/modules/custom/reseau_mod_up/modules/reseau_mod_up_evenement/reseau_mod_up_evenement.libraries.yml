@@ -1,0 +1,8 @@
+extra.display:
+  css:
+    theme:
+      css/block-agenda.css: {}
+
+reseau_mod_up_evenement:
+  dependencies:
+    - core/drupal

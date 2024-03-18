@@ -1,0 +1,8 @@
+extra.adminreseauup:
+  css:
+    theme:
+      css/adminreseauup.css: {}
+
+reseau_mod_up:
+  dependencies:
+    - core/drupal

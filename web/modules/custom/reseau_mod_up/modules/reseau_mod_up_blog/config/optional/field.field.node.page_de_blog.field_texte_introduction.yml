@@ -1,0 +1,20 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_texte_introduction
+    - node.type.page_de_blog
+  module:
+    - text
+id: node.page_de_blog.field_texte_introduction
+field_name: field_texte_introduction
+entity_type: node
+bundle: page_de_blog
+label: Introduction
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

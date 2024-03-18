@@ -1,0 +1,28 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_mots_cles_texte
+    - node.type.page_de_blog
+    - taxonomy.vocabulary.mots_cles_texte
+id: node.page_de_blog.field_mots_cles_texte
+field_name: field_mots_cles_texte
+entity_type: node
+bundle: page_de_blog
+label: 'Mots clés'
+description: "- Renseignez les mots clés séparés par des virgules<br>\r\n- Utilisez une majuscule pour limiter les doublons<br>\r\n- Les espaces juste avant ou juste après la virgule ne sont pas enregistrés<br>\r\n- En tapant la première lettre, des propositions de mots-clés déjà enregistrés vous seront proposés. Cliquez sur le mot clé selectionné, puis mettez une virgule.<br><br>\r\n\r\n<em>Exemple: Formation,Apprentissage,Covid ,    Jeunesse,   </em>\r\n"
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      mots_cles_texte: mots_cles_texte
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: ''
+field_type: entity_reference

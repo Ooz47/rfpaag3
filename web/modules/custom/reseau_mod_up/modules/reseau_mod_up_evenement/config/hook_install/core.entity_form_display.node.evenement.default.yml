@@ -1,0 +1,125 @@
+uuid: 2122871b-9895-404e-9733-855d48ceec04
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.evenement.body
+    - field.field.node.evenement.field_act_acc_reseau
+    - field.field.node.evenement.field_act_acc_structure
+    - field.field.node.evenement.field_act_structure_concernee
+    - field.field.node.evenement.field_date_evenement
+    - field.field.node.evenement.field_image_principale
+    - field.field.node.evenement.field_lieu
+    - field.field.node.evenement.field_structure_associee
+    - field.field.node.evenement.field_thematiques
+    - field.field.node.evenement.field_type_d_evenement
+    - node.type.evenement
+  module:
+    - media_library
+    - smart_date
+    - text
+id: node.evenement.default
+targetEntityType: node
+bundle: evenement
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 7
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  field_act_acc_reseau:
+    type: options_buttons
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_act_acc_structure:
+    type: options_buttons
+    weight: 11
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_act_structure_concernee:
+    type: options_buttons
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_date_evenement:
+    type: smartdate_default
+    weight: 5
+    region: content
+    settings:
+      modal: false
+      default_duration: 60
+      default_duration_increments: |-
+        30
+        60|1 hour
+        90
+        120|2 hours
+        custom
+      show_extra: false
+      hide_date: true
+    third_party_settings: {  }
+  field_image_principale:
+    type: media_library_widget
+    weight: 8
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_lieu:
+    type: text_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_structure_associee:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_thematiques:
+    type: options_select
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_type_d_evenement:
+    type: options_select
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 9
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  langcode: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true
+  url_redirects: true

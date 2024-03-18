@@ -1,0 +1,65 @@
+.toolbar-icon .toolbar-icon-admin-toolbar-tools-help::before,
+.toolbar-icon-9 .toolbar-icon-admin-toolbar-tools-help::before
+ {
+    background-image: url(../../../../themes/custom/reseau/img/favicon-logo.png)!important; 
+}
+
+.tabledrag-toggle-weight,
+input[name="ief-reference-submit-field_fmt_contacts-form"],
+.js-form-item-field-fmt-contacts-form-entities-0-form-delete.form-item-field-fmt-contacts-form-entities-0-form-delete,
+.view-id-content.view-display-id-page_1 #edit-header,
+#views-exposed-form-user-admin-people-page-1 .form-item-permission,
+.view-id-media_library.view-display-id-page .media-library-select-all,
+#block-seven-breadcrumbs .breadcrumb ol, #edit-simple-sitemap,
+#edit-group-paragraphes thead,
+#field_vignettes_formation-media-library-wrapper .media-library-widget__toggle-weight,
+#block-seven-help,
+form.node-structure-edit-form #edit-field-resultats-wrapper table#field-resultats-values #edit-field-resultats-0-top #edit-field-resultats-0-top-links-remove-button,
+#field-reseaux-sociaux-values td.field-multiple-drag
+{
+    display:none!important;
+}
+
+.field--name-field-pb-p-paragraphes table table thead,
+.field--name-field-structure-p-carrousel table thead  {
+display: none; 
+}
+
+/*FORMTION*/
+#entity_browser_iframe_entity_browser_contacts {
+    height: 465px!important;
+}
+
+.entity-browser-iframe-container  {
+width: 100%!important;
+}
+.js .paragraph-type-title,
+.js .paragraph-type-label
+ {
+    overflow: visible;
+}
+.toolbar-icon-menu-link-content2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d:before {
+    background-image: url(../../../../themes/custom/reseau/img/form.svg);
+  }
+
+.field--name-field-pb-p-paragraphes .draggable td.field-multiple-drag,
+.field--name-field-p-sidebar .draggable td.field-multiple-drag {
+    border: 0px solid #999999;
+    border-left-width: 5px;
+    /* border-spacing: 25px; */
+    
+    border-top: 7px solid #fcfcfa;
+}
+
+
+.js .paragraph-type-title {
+    -webkit-flex-basis: 150px!important;
+    -ms-flex-preferred-size: 150px!important;
+    flex-basis: 150px!important;
+}
+
+.field--name-field-p-sidebar table.field-multiple-table > thead .paragraphs-actions,
+.field--name-field-pb-p-paragraphes table.field-multiple-table > thead .paragraphs-actions
+ {
+    display:none;
+}

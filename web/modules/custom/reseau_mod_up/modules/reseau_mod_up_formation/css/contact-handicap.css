@@ -1,0 +1,18 @@
+article.contact-handicap::before {
+    font-size: 30px;
+    font-size: 1.875rem;
+    content: "\f193";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 600;
+    color: #009e99;
+    position: absolute;
+    margin-top: 3px;
+    margin-left: -45px;
+}
+
+
+article.contact-handicap {
+    padding: 1px 15px 0px 50px;
+background: #ffffff;
+margin: 15px 0!important;
+}

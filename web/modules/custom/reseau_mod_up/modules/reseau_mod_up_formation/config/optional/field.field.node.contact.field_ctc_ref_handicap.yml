@@ -1,0 +1,22 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_ctc_ref_handicap
+    - node.type.contact
+id: node.contact.field_ctc_ref_handicap
+field_name: field_ctc_ref_handicap
+entity_type: node
+bundle: contact
+label: 'S''agit-il du référent handicap?'
+description: 'Ce contact sera identifié comme référent handicap sur toutes les fiches formations auxquelles il est associé.'
+required: true
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: Oui
+  off_label: Non
+field_type: boolean

@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for menu_admin_per_menu module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+// function reseau_mod_up_formation_install() {
+//   // Set module weight bigger than menu_ui module.
+//   module_set_weight('reseau_mod_up_formation', 3);
+// }
+
+
+use Drupal\Component\Serialization\Yaml;
+use Drupal\user\Entity\Role;
+
+
+// function getDataPermission()
+// {
+// //Liste de type de contenus autorisés
+// $contentType = 'page_de_blog';
+
+// // On crée la liste des permissions
+// $permissionstoGrant = [];
+
+
+//   $permissionstoGrant[] = "create $contentType content";
+//   $permissionstoGrant[] = "delete any $contentType content";
+//   $permissionstoGrant[] = "delete own $contentType content";
+//   $permissionstoGrant[] = "delete $contentType revisions";
+//   $permissionstoGrant[] = "edit any $contentType content";
+//   $permissionstoGrant[] = "edit own $contentType content";
+//   $permissionstoGrant[] = "revert $contentType revisions";
+//   $permissionstoGrant[] = "view $contentType revisions";
+
+
+
+// //Liste des roles
+// $rolestoGrant = [
+//   'webmaster_cfapag',
+//   'webmaster_greta_guadeloupe',
+//   'webmaster_gipdaifi',
+//   'webmaster_greta_sxmsbh',
+//   'webmaster_cfasbh',
+//   'webmaster_reseau'
+// ];
+
+// return [$permissionstoGrant, $rolestoGrant ];
+// }
+
+/**
+ * Implements hook_install().
+ */
+
+
+
+function reseau_mod_up_blog_install()
+{
+  module_set_weight('reseau_mod_up_blog', 3);
+
+}
+

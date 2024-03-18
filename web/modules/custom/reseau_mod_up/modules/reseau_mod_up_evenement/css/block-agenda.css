@@ -1,0 +1,19 @@
+#block-views-block-agenda-block-3 {
+    -webkit-border-radius: 20px;
+    border-radius: 20px;
+    background: #edf2f5;
+    padding: 20px 65px;
+  
+  }
+
+  /* SM*/
+@media (min-width: 576px) {
+    #block-views-block-actualites-block-3 {
+      margin-right: -1rem !important;
+      margin-left: 1rem !important;
+    }
+  
+    #block-views-block-agenda-block-3 {
+      margin-top: -34px;
+    }
+  }

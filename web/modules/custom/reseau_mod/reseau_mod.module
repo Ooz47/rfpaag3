@@ -1,0 +1,1240 @@
+<?php
+
+/**
+ * @file
+ * Contains pua_mod.module.
+ */
+
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\pathauto\Entity\PathautoPattern;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\views\ViewExecutable;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
+
+
+
+/* Charge template pour block inscription Mailchimp */
+
+function reseau_mod_theme()
+{
+  return [
+    'newsletter_mailchimp_block' => [
+      'variables' => [
+        'data' => [],
+      ],
+    ],
+  ];
+}
+
+function reseau_mod_menu_local_tasks_alter(&$data, $route_name, \Drupal\Core\Cache\RefinableCacheableDependencyInterface &$cacheability)
+{
+  // dsm($route_name);
+  // dsm($route_name);
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+  if (($current_user->hasRole('administrator')) || ($current_user->id() == '1')) {
+    //juste pour tester fonctionnement, à effacer/commenter en prod
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+    return;
+  }
+
+  if ($current_user->hasRole('webmaster_reseau')) {
+    /*retire onglets droits et roles pour webmmster reseau*/
+    if ($route_name == 'entity.user.collection'  && isset($data['tabs'][0])) {
+      // Remove all tabs from user login form.
+      foreach ($data['tabs'][0] as $key => $tab) {
+        $data['tabs'][0][$key]['#access'] = FALSE;
+      }
+    }
+
+    /*retire les onglets sur vue user*/
+    if (($route_name == 'entity.user.canonical')) {
+      foreach ($data['tabs'][0] as $key => $tab) {
+        $data['tabs'][0][$key]['#access'] = FALSE;
+      }
+    }
+
+    return;
+  }
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  //si on accede à un node: paage,actus,evenement,contact,formaation,témoignage
+  if ($node instanceof \Drupal\node\NodeInterface) {
+    $structure_id = get_user_structure_from_role($current_user);
+
+    if ((doesBundleHaveField($node->getEntityTypeId(), $node->bundle(), 'field_structure_associee')) && (!empty($node->get('field_structure_associee')->getValue()))) {
+      $structure = $node->get('field_structure_associee')->getValue();
+      if ($structure[0]['target_id'] != $structure_id) {
+        // Remove all tabs 
+        foreach ($data['tabs'][0] as $key => $tab) {
+          $data['tabs'][0][$key]['#access'] = FALSE;
+        }
+      }
+    }
+  }
+
+
+  /*retire lien login dans simple login*/
+  if (($route_name == 'user.login'  && isset($data['tabs'][0])) || ($route_name == 'user.pass'  && isset($data['tabs'][0]))) {
+    // Remove all tabs from user login form.
+    foreach ($data['tabs'][0] as $key => $tab) {
+      // $data['tabs'][0][$key]['#access'] = FALSE;
+    }
+  }
+}
+
+
+function reseau_mod_page_attachments_alter(array &$attachments)
+{
+  /**
+   * Retire meta generator
+   */
+  foreach ($attachments['#attached']['html_head'] as $key => $attachment) {
+    if ($attachment[1] == 'system_meta_generator') {
+      unset($attachments['#attached']['html_head'][$key]);
+    }
+  }
+
+  /*ajoute css admin*/
+  $admin_theme = \Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = \Drupal::service('theme_handler')->getName($admin_theme);
+  if ($admin_theme_name == 'Seven') {
+    $attachments['#attached']['library'][] = 'reseau_mod/extra.admin';
+  }
+
+  // /* charge library si role est webmaster reseau */
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+  if ($current_user->hasRole('webmaster_reseau')) {
+
+    $attachments['#attached']['library'][] = 'reseau_mod/reseau_mod';
+    // return;
+  }
+}
+
+
+
+/*Définition des constantes associé aux structures*/
+
+const WEBMASTER_GRETA_GUADELOUPE = '1';
+const WEBMASTER_GIPDAIFI = '3';
+const WEBMASTER_GRETA_SXMSBH = '2';
+const WEBMASTER_CFAPAG = '4';
+const WEBMASTER_CAPSBH = '5';
+const WEBMASTER_RESEAU = '8';
+
+const NAME_GRETA_GUADELOUPE = 'greta-guadeloupe';
+const NAME__GIPDAIFI = 'gip-daifi';
+const NAME_GRETA_SXMSBH = 'greta-stmartin-stbarth';
+const NAME_CFAPAG = 'cfapag:';
+const NAME_CAPSBH = 'capsbh';
+const NAME_RESEAU = 'reseau';
+
+//récupère la structure associée au role de l'utilisateur courant
+function get_user_structure_from_role($user)
+{
+
+  if ($user->hasRole('webmaster_greta_guadeloupe')) {
+    $structure_id = WEBMASTER_GRETA_GUADELOUPE;
+  } elseif ($user->hasRole('webmaster_gipdaifi')) {
+    $structure_id = WEBMASTER_GIPDAIFI;
+  } elseif ($user->hasRole('webmaster_greta_sxmsbh')) {
+    $structure_id = WEBMASTER_GRETA_SXMSBH;
+  } elseif ($user->hasRole('webmaster_cfapag')) {
+    $structure_id = WEBMASTER_CFAPAG;
+  } elseif ($user->hasRole('webmaster_cfasbh')) {
+    $structure_id = WEBMASTER_CAPSBH;
+  }
+  //administrtor ou webmster_reseau
+  else {
+    $structure_id = WEBMASTER_RESEAU;
+  }
+
+  return $structure_id;
+};
+
+//récupère la structure associée au role de l'utilisateur courant
+function get_user_structure_name_from_role($user)
+{
+  if ($user->hasRole('webmaster_greta_guadeloupe')) {
+    $structure_name = NAME_GRETA_GUADELOUPE;
+  } elseif ($user->hasRole('webmaster_gipdaifi')) {
+    $structure_name = NAME__GIPDAIFI;
+  } elseif ($user->hasRole('webmaster_greta_sxmsbh')) {
+    $structure_name = NAME_GRETA_SXMSBH;
+  } elseif ($user->hasRole('webmaster_cfapag')) {
+    $structure_name = NAME_CFAPAG;
+  } elseif ($user->hasRole('webmaster_cfasbh')) {
+    $structure_name = NAME_CAPSBH;
+  }
+  //administrtor ou webmster_reseau
+  else {
+    $structure_name = NAME_RESEAU;
+  }
+  return $structure_name;
+};
+
+//récupère le node vers structure associée
+function get_node_by_structureassocie_id($taxonomyid)
+{
+// Propriété à filtrer.
+$values = [
+  'type' => 'structure',
+  'field_structure_associee' => $taxonomyid,
+];
+$nodes = \Drupal::entityTypeManager()
+  ->getStorage('node')
+  ->loadByProperties($values);
+
+  // récupère 1er element de l'array, normalement unique
+$node= reset($nodes);
+   return $node;
+};
+
+//Renseigne valeur par défault du champ structure associée à la création d'un média, en fonction de l'utilisateur courant
+function reseau_mod_media_field_values_init(\Drupal\Core\Entity\FieldableEntityInterface $entity)
+{
+  fill_initial_values($entity);
+}
+
+//Renseigne valeur par défault du champ structure associée à la création d'un node, en fonction de l'utilisateur courant
+function reseau_mod_node_field_values_init(\Drupal\Core\Entity\FieldableEntityInterface $entity)
+{
+  $nodetype = array("actualite", "evenement", "formation", "page", "contact", "bloc_reutilisable", "temoignage");
+  if (in_array($entity->getType(), $nodetype)) {
+    fill_initial_values($entity);
+  }
+}
+
+function fill_initial_values($entity)
+{
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+  if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+
+    // a la création d'un contact ou d'un média depuis page édition formation, recupère structure associé à formation
+    if (isset($_SERVER['HTTP_REFERER'])) {
+      $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+      $path = htmlspecialchars($referer_url['path']);
+      if (preg_match('/node\/(\d+)\/edit/', $path, $matches)) {
+        $node = \Drupal\node\Entity\Node::load($matches[1]);
+        if ($node instanceof \Drupal\node\NodeInterface) {
+
+          if (!empty($node->get('field_structure_associee')->getValue())) {
+            $terms = $node->get('field_structure_associee')->getValue();
+            if ($entity->getEntityTypeId() == 'node') {
+              if (($entity->getType() == 'contact') || ($entity->getType() == 'bloc_reutilisable')) {
+                $entity->field_structure_associee->target_id = $terms[0]['target_id'];
+              }
+            } elseif ($entity->getEntityTypeId() == 'media') {
+              $entity->field_media_structure_associee->target_id = $terms[0]['target_id'];
+            }
+            return;
+          }
+        }
+      }
+     
+      if (strpos($path, '/node/add/') === 0) {
+        // dsm($entity);
+        return;
+     }
+    }
+  }
+  $structure_id = get_user_structure_from_role($current_user);
+
+  if ($entity->getEntityTypeId() == 'node') {
+    $entity->field_structure_associee->target_id = $structure_id;
+  } elseif ($entity->getEntityTypeId() == 'media') {
+    $entity->field_media_structure_associee->target_id = $structure_id;
+  }
+}
+
+/*REtire bulk operations sur page addin media*/
+function reseau_mod_views_pre_view(ViewExecutable $view, $display_id, array &$args)
+{
+
+  if ($view->id() == 'media' && $display_id == 'media_page_list') {
+    $view->removeHandler($view->current_display, 'field', 'media_bulk_form');
+  }
+
+  if ($view->id() == 'media_library' && $display_id == 'page') {
+    $view->removeHandler($view->current_display, 'field', 'media_bulk_form');
+  }
+
+  if ($view->id() == 'user_admin_people' && $display_id == 'page_1') {
+    $view->removeHandler($view->current_display, 'field', 'user_bulk_form');
+  }
+
+  /* Ajoute les criteres de recherche présents dans requestenvoyé pr moteur de recherche accuei en post dans query pour afficher bon résultat sur page formtions*/
+  if ($view->id() == 'recherche_formations') {
+    if ($display_id == 'page_1') {
+      $current_request = \Drupal::request()->request->all();
+      //on reforme array structure et profil pour que fonctionne filtre page seulement si requetes n'est paas jx
+      if (!isset($current_request['ajax_page_state'])) {
+        foreach ($current_request as $key => $value) {
+          if (is_array($value)) {
+            $valuenew = array();
+            foreach ($value as $keyarr => $valuerr) {
+              $valuenew[$valuerr] =  $valuerr;
+            }
+            $value = $valuenew;
+          }
+          \Drupal::request()->query->add([$key => $value]);
+        }
+      }
+    }
+  }
+  if ($view->id() == 'actualites' && $display_id =="block_2") {
+    $node = \Drupal::routeMatch()->getParameter('node');
+    //si on accede à un node: page,actus,evenement,contact,formaation,témoignage
+    if ($node instanceof \Drupal\node\NodeInterface) {
+
+      if ((doesBundleHaveField($node->getEntityTypeId(), $node->bundle(), 'field_structure_associee')) && (!empty($node->get('field_structure_associee')->getValue()))) {
+        $structureid = $node->get('field_structure_associee')->getValue();
+        
+        $filters = $view->getDisplay()->getOption('filters'); 
+
+       $filters["field_structure_associee_target_id"]["value"] = [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+       $filters["field_act_structure_concernee_target_id"]["value"] =  [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+      //  dsm($filters["field_act_structure_concerne_target_id"]["value"]);
+       $view->display_handler->overrideOption('filters', $filters);
+
+       
+      //  $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($structureid[0]['target_id']);
+      // dsm( $view);
+
+       $options = array(
+        'id' => 'area_text_custom',
+        'table' => 'views',
+        'field' => 'area_text_custom',
+        'relationship' => 'none',
+        'group_type' => 'none',
+        'admin_label' => '',
+        'empty' => TRUE,
+        'tokenize' => FALSE,
+        'content' => "<h2><span class=\"bleu\">".$node->getTitle()."</span> Actualité</h2>",
+        // 'content' => "<h2><span class=\"bleu\">".$term->getName()."</span> Actualité</h2>",
+        'plugin_id' => 'text_custom',
+      );
+      $view->setHandler('block_2', 'header', 'area_text_custom', $options);
+
+      }  
+    }
+}
+}
+
+/*WIP: modifier lien edit/delete de media sur vue media grid */
+function reseau_mod_preprocess_views_view_field(&$variables)
+{
+  // tentative avec cache pour performance
+  /* Dans view prebuild */
+  // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+  // $tempstore = \Drupal::service('tempstore.private')->get('reseau_mod');
+  // $tempstore->set('current_user', $current_user);
+  /**/
+  // $tempstore = \Drupal::service('tempstore.private')->get('reseau_mod');
+  // $current_user = $tempstore->get('current_user');
+  $view = $variables['view'];
+
+  if ($view->id() == 'media_library') {
+    if (($variables['field']->field == 'edit_media') || ($variables['field']->field == 'delete_media')) {
+      $current_media = \Drupal::entityTypeManager()->getStorage('media')->load($variables['row']->mid);
+      $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+      if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+        //juste pour tester fonctionnement, à effacer/commenter en prod
+        // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+        return;
+      }
+
+      $structure_id = get_user_structure_from_role($current_user);
+      ///access control
+      if (isset($current_media->field_media_structure_associee->target_id) && ($current_media->field_media_structure_associee->target_id == $structure_id)) {
+        return;
+      }
+      $my_altered_value = '';
+      $variables['output'] = $my_altered_value;
+    }
+  }
+}
+
+
+
+/* Modifie lien operation sur media fonction de l'utilisateur en cours*/
+function reseau_mod_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity)
+{
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+  $account = \Drupal::currentUser();
+
+  if ($entity->getEntityTypeId() == 'user') {
+    //on retire lien de modification administrateur pour webmster reseau
+    if (($current_user->hasRole('webmaster_reseau'))) {
+      $role = $entity->get('roles')->getValue();
+      if (isset($role[0]['target_id']) && ($role[0]['target_id']  != 'administrator')) {
+        return;
+      }
+      $operations = [];
+    }
+  }
+
+  if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+    //juste pour tester fonctionnement, à effacer/commenter en prod
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+    return;
+  }
+
+  if (
+    $entity
+    ->getEntityTypeId() == 'media' && $account
+    ->hasPermission('modifier medias structure associee')
+  ) {
+    $structure_id = get_user_structure_from_role($current_user);
+    if (isset($entity->field_media_structure_associee->target_id) && ($entity->field_media_structure_associee->target_id == $structure_id)) {
+      return;
+    }
+    $operations = [];
+  }
+
+  if ($entity->getEntityTypeId() == 'node') {
+    $structure_id = get_user_structure_from_role($current_user);
+    if (isset($entity->field_structure_associee->target_id) && ($entity->field_structure_associee->target_id == $structure_id)) {
+      return;
+    }
+    $operations = [];
+  }
+}
+
+/* Récupère contacts associés au formation pour formulaire de pré inscription */
+/*web\modules\custom\reseau_mod\src\Plugin\WebformHandler\ReseauEmailWebformHandler.php */
+function get_contacts_formation($formationid)
+{
+  $formation = \Drupal::entityTypeManager()->getStorage('node')->load($formationid);
+  $contacts_id = $formation->get('field_fmt_contacts')->getValue();
+  $destinataires = [];
+  if (!empty($contacts_id)) {
+    foreach ($contacts_id as $contact_key => $contact_id) {
+
+      $contact = \Drupal::entityTypeManager()->getStorage('node')->load($contact_id['target_id']);
+
+      if (!empty($contact->field_ctc_email->value)) {
+        if ((empty($contact->field_ctc_ref_handicap->value) ) || ((!empty($contact->field_ctc_ref_handicap->value)) && ($contact->field_ctc_ref_handicap->value != 1 ))) {
+        $destinataires[] = $contact->field_ctc_email->value;
+      }
+      }
+    }
+  }
+
+  return $destinataires;
+}
+
+
+/**
+ * Attache form id  à to les form elements.
+ *
+ * @param $form
+ *   The form or form element which children should have form id attached.
+ * @param $form_id
+ *   The form id attached to form elements.
+ *
+ * @return array
+ */
+function reseau_mod_attach_form_id(&$form, $form_id)
+{
+  foreach (Element::children($form) as $child) {
+    if (!isset($form[$child]['#form_id'])) {
+      $form[$child]['#form_id'] = $form_id;
+    }
+    reseau_mod_attach_form_id($form[$child], $form_id); // recurse for children
+  }
+}
+
+//Modification des formulaire
+function reseau_mod_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+  reseau_mod_attach_form_id($form, $form['#id']);
+
+  if (($form_id === 'user_form') || ($form_id === 'user_register_form')) {
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+    if (($current_user->hasRole('administrator')) || ($current_user->id() == '1')) {
+        //si admin retire l'ajout ou modification du rôle authenticated
+      if (isset($form['account']['roles']['#options'])) {
+        unset($form['account']['roles']['#options']['authenticated']);
+      }
+         //si role à éditer "authenticted" => user 1, retire status et roles
+         if ($form_id === 'user_form') {
+          if ((isset($form['account']['roles']['#default_value']))
+            && (($form['account']['roles']['#default_value'] == 'authenticated'))
+          ) {
+            $form['account']['roles']['#access'] = FALSE;
+            $form['account']['status']['#access'] = FALSE;
+          }
+        }
+      return;
+    } else {
+      if (($current_user->hasRole('webmaster_reseau'))) {
+        if ($form_id === 'user_form') {
+          if ((isset($form['account']['roles']['#default_value']))
+            && (($form['account']['roles']['#default_value'] == 'administrator')
+              || ($form['account']['roles']['#default_value'] == 'authenticated'))
+          ) {
+            throw new AccessDeniedHttpException();
+          }
+        }
+
+        if ($form_id === 'user_register_form') {
+          $form['account']['notify']['#access'] = FALSE;
+        }
+        if (isset($form['account']['roles']['#options'])) {
+          unset($form['account']['roles']['#options']['administrator']);
+          unset($form['account']['roles']['#options']['authenticated']);
+        }
+      } else {
+        if (isset($form['account']['status'])) {
+          $form['account']['status']['#access'] = FALSE;
+        }
+      }
+    }
+  }
+
+  if ($form_id === 'user_cancel_form') {
+
+    $form['user_cancel_confirm']['#access'] = FALSE;
+  }
+
+  if ($form_id === 'views_exposed_form') {
+    if ($form['#id'] === 'views-exposed-form-recherche-page-1') {
+      // $value = html_entity_decode('&#xf002;');
+      $value = html_entity_decode('&nbsp;');
+   
+      $form['actions']['submit']['#value'] = $value;
+      // $form['#after_build'][] = 'reseau_mod_afterbuildfunction_recherche1';
+    }
+
+    /* Recherche formation bnnière */
+    if ($form['#id'] === 'views-exposed-form-recherche-formations-page-2') {
+      $form['structure']['#attributes']['data-placeholder'] = t('Sélectionner une structure');
+      $form['profil']['#attributes']['data-placeholder'] = t('Sélectionner votre profil');
+
+      $form['#method'] = 'POST';
+      $form['#after_build'][] = 'reseau_mod_afterbuildfunction_recherche';
+    }
+
+
+    if ($form['#id'] === 'views-exposed-form-content-page-1') {
+      if (isset($form['type']['#options'])) {
+        unset($form['type']['#options']['webform']);
+        unset($form['type']['#options']['slider']);
+      }
+    }
+  }
+
+  if ($form_id === 'media_library_add_form_upload') {
+    if (isset($form['media']['0']['fields']['field_media_structure_associee']['widget'])) {
+      if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+        return;
+      }
+      $form['media']['0']['fields']['field_media_structure_associee']['widget']['#disabled'] = TRUE;
+    }
+  }
+
+  /*Gestion structure associée form Add media */
+
+  $mediaformtype = array(
+    "media_document_add_form", "media_image_add_form",
+    "media_audio_add_form", "media_remote_video_add_form",
+    "media_video_add_form"
+  );
+
+  if (in_array($form_id, $mediaformtype)) {
+    $form['revision_log_message']['#access'] = FALSE;
+    $form['revision_information']['#access'] = FALSE;
+    // $form['path']['#access'] = FALSE;
+
+    if (isset($form['field_media_structure_associee']['widget'])) {
+      if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+        return;
+      }
+      $form['status']['#access'] = FALSE;
+      $form['created']['#access'] = FALSE;
+      $form['author']['#access'] = FALSE;
+      $form['field_media_structure_associee']['widget']['#disabled'] = TRUE;
+    }
+  }
+
+  //  /* Gestion edit media */
+
+  $mediaformtype = array(
+    "media_document_edit_form", "media_image_edit_form",
+    "media_audio_edit_form", "media_remote_video_edit_form",
+    "media_video_edit_form"
+  );
+
+  if (in_array($form_id, $mediaformtype)) {
+
+    $form['revision_log_message']['#access'] = FALSE;
+    $form['revision_information']['#access'] = FALSE;
+    // $form['path']['#access'] = FALSE;
+
+    if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+      return;
+    }
+
+    get_autorisation_access();
+    $form['status']['#access'] = FALSE;
+    $form['created']['#access'] = FALSE;
+    $form['author']['#access'] = FALSE;
+    $form['field_media_structure_associee']['widget']['#disabled'] = TRUE;
+  }
+
+  //  /* Gestion delete media */
+  $mediaformtype = array(
+    "media_document_delete_form", "media_image_delete_form",
+    "media_audio_delete_form", "media_remote_video_delete_form",
+    "media_video_delete_form"
+  );
+
+  if (in_array($form_id, $mediaformtype)) {
+    if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+      return;
+    }
+    get_autorisation_access();
+    $form['field_media_structure_associee']['widget']['#disabled'] = TRUE;
+  }
+
+  
+  $nodetype = array(
+    "node_formation_form", "node_formation_edit_form",
+    "node_contact_form", "node_contact_edit_form",
+    "node_structure_form",
+    // "node_bloc_reutilisable_edit_form", "node_bloc_reutilisable_form",
+    "node_temoignage_edit_form", "node_temoignage_form"
+  );
+  // dsm($form_id);
+  if (in_array($form_id, $nodetype)) {
+/* Retire option réseau dans structure associée */
+if (isset($form['field_structure_associee']['widget'])) {
+  unset($form['field_structure_associee']['widget']['#options']['8']);
+}
+
+  }
+
+  if ($form_id === 'node_formation_edit_form' || $form_id === 'node_formation_form') {
+/* Gestion de l'affichage du champ pole gret guadeloupe */
+    $form['field_fmt_pole_greta_gp']['#states'] = [
+      'visible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '1'],
+      ],
+    ];
+  }
+
+  /*  Afficher champ information de publication avec date */
+  if (($form_id === 'node_actualite_edit_form') || ($form_id === 'node_actualite_form')) {
+    $form['created']['#access'] = TRUE;
+    $form['field_act_acc_structure']['#states'] = [
+      'invisible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+    $form['field_act_acc_reseau']['#states'] = [
+      'invisible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+    $form['field_act_structure_concernee']['#states'] = [
+      'visible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+        /* Retire option réseau dans structure concernée */
+if (isset($form['field_act_structure_concernee']['widget'])) {
+  unset($form['field_act_structure_concernee']['widget']['#options']['8']);
+}
+  }
+
+  /*Gestion accès form Add et edit */
+  $nodetype = array(
+    "node_actualite_form", "node_actualite_edit_form",
+    "node_evenement_form", "node_evenement_edit_form",
+    "node_formation_form", "node_formation_edit_form",
+    "node_page_form", "node_page_edit_form",
+    "node_contact_form", "node_contact_edit_form",
+    "node_structure_edit_form",
+    "node_bloc_reutilisable_edit_form", "node_bloc_reutilisable_form",
+    "node_slider_edit_form", "node_slider_form",
+    "node_temoignage_edit_form", "node_temoignage_form"
+  );
+  // dsm($form);
+  if (in_array($form_id, $nodetype)) {
+
+    $form['revision']['#access'] = FALSE;
+    $form['status']['#access'] = TRUE;
+    $form['revision_log']['#access'] = FALSE;
+    $form['menu']['#access'] = TRUE;
+    $form['menu']['#open'] = TRUE;
+  
+    if (isset($form['menu']['link']['description'])) {
+      $form['menu']['link']['description']['#access'] = FALSE;
+    }
+    if (isset($form['menu']['link']['weight'])) {
+      $form['menu']['link']['weight']['#access'] = FALSE;
+    }
+
+    if (isset($form['simple_sitemap_index_now'])) {
+      $form['simple_sitemap_index_now']['#access'] = FALSE;
+    }
+
+    // if (isset($form['index_now'])) {
+    //   $form['index_now']['#access'] = FALSE;
+    // }
+    
+    
+    if (isset($form['field_date_evenement']['widget'])) {
+      $form['field_date_evenement']['widget']['add_more']['#access'] = false;
+    }
+    if (isset($form['field_resultats']['widget'])) {
+      $form['field_resultats']['widget']['add_more']['#access'] = false;
+    }
+
+     //Ajout callback pour redirection témoignage
+     if ($form_id === 'node_temoignage_edit_form' || $form_id === 'node_temoignage_form') {
+    
+      foreach (array_keys($form['actions']) as $action) {
+        if ($action != 'preview' && isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+          $form['actions'][$action]['#submit'][] = 'callback_temoignage_submit';
+        }
+      }
+        }
+
+    if ($form_id === 'node_structure_edit_form') {
+
+      if (isset($form['field_structure_associee']['widget'])) {
+        unset($form['field_structure_associee']['widget']['#options']['8']);
+        $form['field_structure_associee']['widget']['#disabled'] = TRUE;
+      }
+      $form['status']['#attributes']['class'][] = 'hidden';
+      $form['menu']['#attributes']['class'][] = 'hidden';
+      // dsm($form);
+    }
+
+
+    /* Ne pas afficher menu qui n'appartient pas à la structure de l'utilisateur */
+    if (($form_id === 'node_page_form') || ($form_id === 'node_page_edit_form')) {
+      $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+      if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+        return;
+      } else {
+        $structure_name = get_user_structure_name_from_role($current_user);
+        foreach ($form['menu']['link']['menu_parent']['#options'] as $key => $value) {
+
+          if (strpos($key, $structure_name) !== 0) {
+            unset($form['menu']['link']['menu_parent']['#options'][$key]);
+          }
+        }
+      }
+    }
+    // dsm('hella');
+ 
+    if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+      return;
+    }
+// dsm('hello');
+    get_autorisation_access();
+
+    if (($form_id === 'node_slider_edit_form') || ($form_id === 'node_slider_form')) {
+      throw new AccessDeniedHttpException();
+    }
+
+    if (isset($form['field_act_epingle']['widget'])) {
+      // $form['field_act_epingle']['widget']['#access'] = false;
+      $form['field_act_epingle']['#attributes']['class'][] = 'hidden';
+    }
+    // dsm($form);
+    $form['field_structure_associee']['widget']['#disabled'] = TRUE;
+  }
+
+
+  /* Gestion delete */
+  $nodetype = array(
+    "node_actualite_delete_form",
+    "node_evenement_delete_form",
+    "node_formation_delete_form",
+    "node_page_delete_form",
+    "node_contact_delete_form",
+    "node_structure_delete_form",
+    "node_bloc_reutilisable_delete_form",
+    "node_slider_delete_form", ""
+  );
+
+  if (in_array($form_id, $nodetype)) {
+    get_autorisation_access();
+    
+  //  if (isset($form['index_now'])) {
+  // $form['index_now']['#access'] = FALSE;
+  // }
+  if (isset($form['simple_sitemap_index_now'])) {
+    $form['simple_sitemap_index_now']['#access'] = FALSE;
+  }
+  }
+
+
+  /* Form strucure */
+
+  if ($form_id === 'node_structure_form') {
+    $form['revision']['#access'] = FALSE;
+    $form['revision_log']['#access'] = FALSE;
+
+    if (isset($form['field_resultats']['widget'])) {
+      $form['field_resultats']['widget']['add_more']['#access'] = false;
+    }
+ 
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+    if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+      //juste pour tester fonctionnement, à effacer/commenter en prod
+      // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+      return;
+    }
+    throw new AccessDeniedHttpException();
+  }
+
+  if ((isset($form['#entity_type'])) && ($form['#entity_type'] === 'menu_link_content')) {
+
+    $form['field_menu_ft_icone']['#access'] = FALSE;
+    $form['description']['#access'] = FALSE;
+    $form['weight']['#access'] = FALSE;
+    $form['expanded']['#access'] = FALSE;
+    $form['view_mode']['#access'] = FALSE;
+  }
+
+  //  /* Gestion edit media */
+
+  $taxonomytermformtype = array(
+    "taxonomy_term_modalite_admission_form",
+    "taxonomy_term_type_de_certification_profession_form"
+  );
+  // dsm($form_id);
+  if (in_array($form_id, $taxonomytermformtype)) {
+   
+    $form['status']['#access'] = FALSE;
+  }
+
+} //form_alter
+
+
+//Redirection vers page de la structure associée après ajout d'un témoignage
+function callback_temoignage_submit($form, FormStateInterface $form_state) {
+  
+  $node =  get_node_by_structureassocie_id($form_state->getValue('field_structure_associee')[0]['target_id']);
+  $form_state->setRedirect('entity.node.canonical',
+  ['node' => $node->id()]
+);
+}
+
+/**
+ * @file
+ * Hooks provided by the Inline Entity Form module.
+ */
+
+/**
+ * Perform alterations before an entity form is included in the IEF widget.
+ *
+ * @param array $entity_form
+ *   Nested array of form elements that comprise the entity form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state of the parent form.
+ */
+function reseau_mod_inline_entity_form_entity_form_alter(array &$entity_form, FormStateInterface &$form_state)
+{
+  if ($entity_form['#entity_type'] == 'node') {
+    if (($entity_form['#bundle'] == 'contact') || ($entity_form['#bundle'] == 'bloc_reutilisable')) {
+      get_autorisation_access();
+
+      //si autre que aadmin, webmster on disable modification de la structure
+      $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+  if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+    if ($entity_form['#bundle'] == 'contact') {
+    unset($entity_form['field_structure_associee']['widget']['#options']['8']);
+    }
+    if ($form_state->getFormObject()->getOperation() == 'edit') {
+      $entity_form['field_structure_associee']['widget']['#disabled'] = TRUE;
+    }
+  }
+  else {
+    $entity_form['field_structure_associee']['widget']['#disabled'] = TRUE;
+  }
+    }
+  }
+}
+
+
+//Renvoie page non autorisée, si utilisateur et node n'ont pas structure en commun
+function get_autorisation_access()
+{
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+  if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+    
+    //juste pour tester fonctionnement, à effacer/commenter en prod
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+    return;
+  }
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  //si on accede à un node: page,actus,evenement,contact,formaation,témoignage
+  if ($node instanceof \Drupal\node\NodeInterface) {
+    $structure_id = get_user_structure_from_role($current_user);
+    if ((doesBundleHaveField($node->getEntityTypeId(), $node->bundle(), 'field_structure_associee')) && (!empty($node->get('field_structure_associee')->getValue()))) {
+      $structure = $node->get('field_structure_associee')->getValue();
+      if ($structure[0]['target_id'] != $structure_id) {
+        throw new AccessDeniedHttpException();
+      }
+    }
+  }
+
+  //si on accede à un node: media
+  $media = \Drupal::routeMatch()->getParameter('media');
+  if ($media instanceof \Drupal\media\Entity\Media) {
+    $structure_id = get_user_structure_from_role($current_user);
+    if ((doesBundleHaveField($media->getEntityTypeId(), $media->bundle(), 'field_media_structure_associee')) && (!empty($media->get('field_media_structure_associee')->getValue()))) {
+      $structure = $media->get('field_media_structure_associee')->getValue();
+      if ($structure[0]['target_id'] != $structure_id) {
+        throw new AccessDeniedHttpException();
+      }
+    }
+  }
+}
+
+function doesBundleHaveField($entity_type = 'node', $bundle = 'page', $field_name = 'field_paragraphs')
+{
+  $all_bundle_fields = \Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type, $bundle);
+  return isset($all_bundle_fields[$field_name]);
+}
+
+
+function reseau_mod_afterbuildfunction_recherche($form_element, &$form_state)
+{
+  $querystructure = \Drupal::request()->request->all();
+  $querysettings = [];
+  foreach ($querystructure as $key => $value) {
+    $querysettings[$key] = $value;
+  }
+  // dsm($querystructure);
+  //pour gérer feedback dns exposed form en fonction des critères de recherche de la page d'accueil
+  // $form_element['#attached']['library'][] = 'reseau_mod/recherche';
+  $form_element['#attached']['drupalSettings']['reseau_mod']['recherche'] = $querysettings;
+  return $form_element;
+}
+
+// function reseau_mod_afterbuildfunction_recherche1($form_element, &$form_state)
+// {
+//   // //fourni par _pre_build, correspond à la structure de provenance
+//   // on le récupère, et le transmet à js
+//   $tempstore = \Drupal::service('tempstore.private')->get('reseau_mod');
+//   $ssquerystructure = $tempstore->get('querystructure');
+//   if (isset($ssquerystructure)) {
+//     $querysettings2 = [
+//       'structure' => $ssquerystructure,
+//       'profil' => $form_state->getValue('profil'),
+//     ];
+//     $form_element['#attached']['library'][] = 'reseau_mod/recherche';
+//     $form_element['#attached']['drupalSettings']['reseau_mod']['recherche2'] = $querysettings2;
+//     //on detruit variable de session
+//     $tempstore = \Drupal::service('tempstore.private')->get('reseau_mod');
+//     $tempstore->delete('querystructure');
+
+//     }
+//     // $form_element['#cache']['max-age'] = 0;
+//     // $form_element['#cache']['contexts'][] = 'session';
+//     // dsm($form_element);
+//   return $form_element;
+// }
+
+/**
+ * Implements hook_field_widget_form_alter().
+ */
+function reseau_mod_field_widget_form_alter(&$element, \Drupal\Core\Form\FormStateInterface $form_state, $context)
+{
+  $field_definition = $context['items']
+    ->getFieldDefinition();
+  if (($field_definition->getType() == 'text_long') || ($field_definition->getType() == 'text_with_summary')) {
+    $element['#allowed_formats'] = ['basic_html'];
+    $element['#after_build'][] = '_text_long_content_after_build';
+  }
+}
+
+/**
+ * After build callback for field_text_content.
+ * 
+ * @param array $element
+ *   Array element.
+ * @param $form_state
+ *   Form state.
+ *
+ * @return array
+ *   New element.
+ */
+function _text_long_content_after_build(array $element, \Drupal\Core\Form\FormStateInterface $form_state)
+{
+  if (isset($element['format'])) {
+    // Remove Guidelines and Help text.
+    unset($element['format']['help']);
+    unset($element['format']['guidelines']);
+    unset($element['format']['#type']);
+    unset($element['format']['#theme_wrappers']);
+  }
+  return $element;
+}
+
+
+function reseau_mod_pathauto_pattern_alter(PathautoPattern &$pattern, array $context)
+{
+  // When nodes are created or updated, alter pattern with criteria logic.
+  if ($context['module'] == 'node' && ($context['op'] == 'insert' || $context['op'] == 'update' || $context['op'] == 'bulkupdate')) {
+    /** @var \Drupal\node\Entity\Node $node */
+    $node = $context['data']['node'];
+
+    $replacements = [];
+    switch ($node->getType()) {
+      case 'actualite':
+        if (!empty($node->get('field_structure_associee')->getValue())) {
+          $tags = $node->get('field_structure_associee')
+            ->first()
+            ->get('entity')
+            ->getTarget()
+            ->getValue();
+
+          $terms = $node->get('field_structure_associee')->getValue();
+          if ($terms[0]['target_id'] != WEBMASTER_RESEAU) {
+            $replacements[] = '[node:field_structure_associee:entity:name]';
+          }
+        }
+        $replacements[] = 'actualites/[node:title]';
+
+        break;
+
+      case 'evenement':
+        if (!empty($node->get('field_structure_associee')->getValue())) {
+          $tags = $node->get('field_structure_associee')
+            ->first()
+            ->get('entity')
+            ->getTarget()
+            ->getValue();
+
+          $terms = $node->get('field_structure_associee')->getValue();
+          if ($terms[0]['target_id'] != WEBMASTER_RESEAU) {
+            $replacements[] = '[node:field_structure_associee:entity:name]';
+          }
+        }
+
+
+        $replacements[] = 'agenda/[node:title]';
+
+        break;
+
+      case 'page':
+        if (!empty($node->get('field_structure_associee')->getValue())) {
+          $tags = $node->get('field_structure_associee')
+            ->first()
+            ->get('entity')
+            ->getTarget()
+            ->getValue();
+
+          $terms = $node->get('field_structure_associee')->getValue();
+          if ($terms[0]['target_id'] != WEBMASTER_RESEAU) {
+            $replacements[] = '[node:field_structure_associee:entity:name]';
+          }
+        }
+
+        $replacements[] = '[node:title]';
+        break;
+
+      default:
+        break;
+    }
+
+    if ($replacements) {
+      // Split the replacements with slashes for URL.
+      $replacements = implode('/', $replacements);
+
+      // Replace default [node:title] with logic-derived tokens.
+      $pattern->setPattern(preg_replace('/\[node:title(\:[^]]*)?\]/', $replacements . '$1', $pattern->getPattern()));
+    }
+  }
+}
+
+/** Modification contextual filter pour afficher logo de la structure sur page actulités **/
+function reseau_mod_views_pre_build(ViewExecutable $view)
+{
+  $url  = \Drupal::service('path.current')->getPath();
+
+  /* si view slider logo */
+  if ($view->id() == 'sliders') {
+    if ($view->current_display == 'block_2') {
+      //si sur page x/atualites
+      if (basename($url) == 'actualites') {
+        //on recupere chemin à partir e l'alias de x/    
+        $structure = explode('/', $url);
+        $path = \Drupal::service('path_alias.manager')->getPathByAlias('/' . $structure[1]);
+
+        // on modifie l'argument de la vue
+        $view->args[0] = basename($path);
+      }
+
+      /* Si sur webform */
+      $webform = explode('/', $url);
+      if ($webform[1] == 'webform') {
+
+        $alias = \Drupal::service('path_alias.manager')->getAliasByPath($url);
+        $structure = explode('/', $alias);
+        $path = \Drupal::service('path_alias.manager')->getPathByAlias('/' . $structure[1]);
+        $view->args[0] = basename($path);
+      }
+    }
+  }
+
+  if (basename($url) == 'formations') {
+    if ($view->id() == 'recherche_formations') {
+      if (($view->current_display == 'page_1')) {
+
+        $view->element['#attached']['library'][] = 'reseau_mod/recherche';
+
+
+        $current_request = \Drupal::request()->request->all();
+        // dsm($current_request);
+        if (empty($current_request)) {
+          if (isset($_SERVER['HTTP_REFERER'])) {
+            $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+            // dsm($referer_url);
+            $path = htmlspecialchars($referer_url['path']);
+            $pathref = \Drupal::service('path_alias.manager')->getPathByAlias($path);
+          
+            // pour site test
+            // $pathnew = explode('/', $path);
+            // $pathref = \Drupal::service('path_alias.manager')->getPathByAlias("/".$pathnew[3]."");
+
+            $structure = explode('/', $pathref);
+
+
+            if (isset($structure[2])) {
+              $node = \Drupal\node\Entity\Node::load($structure[2]);
+              if ($node instanceof \Drupal\node\NodeInterface) {
+                if (!empty($node->get('field_structure_associee')->getValue())) {
+
+                  $terms = $node->get('field_structure_associee')->getValue();
+                  if ($terms[0]['target_id'] != WEBMASTER_RESEAU) {
+
+
+                    //on ajoute id de la structure à query pour affichage des bons résultats page formations
+                    \Drupal::request()->query->add(['structure' => ['' => $terms[0]['target_id']]]);
+
+                    //on ajoute id à variable temporaire pour utilisation dans afterbuild et transmission à javascript pour feedback user 
+                    $querystructure = ['structure' => ['0' => $terms[0]['target_id']]];
+
+                    $querysettings2 = [
+                      'structure' => $querystructure,
+                      'profil' => '',
+                    ];
+                    // $form_element['#attached']['library'][] = 'reseau_mod/recherche';
+                    $view->element['#attached']['drupalSettings']['reseau_mod']['recherche2'] = $querysettings2;
+                    // $view->element['#cache']['tags'] = 'referrer:dsfsdf';
+                    // $view->element['#cache']['tags'][] = 'referrer:'.$terms[0]['target_id'];
+                    // $view->element['#cache']['contexts'][] = 'referrer:'.$terms[0]['target_id'];
+
+
+                    // sers à fficher message et donc à invalider cache de la page pour user anonyme
+                    $seed = floor(time()/(60*1));
+                    srand($seed);
+                    $item = rand(0,99999);
+
+                    \Drupal::messenger()->addMessage($pathref.''.$item);
+                    // $tempstore = \Drupal::service('tempstore.private')->get('reseau_mod');
+                    // $tempstore->set('querystructure', $querystructure);
+                  }
+                }
+              }
+            }
+          }
+          \Drupal::messenger()->addMessage('HTTP_REFERER');
+        }
+        // dsm($view->element);
+      }
+    }
+  }
+
+  // drupal_flush_all_caches();
+  if ($view->id() == 'entity_browser_nodes') {
+    if (($view->current_display == 'entity_browser_1') || ($view->current_display == 'entity_browser_2')) {
+
+      $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+      // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+      //
+      if (($current_user->hasRole('administrator'))  || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+
+        if (isset($_SERVER['HTTP_REFERER'])) {
+          $referer_url = parse_url($_SERVER['HTTP_REFERER']);
+          $path = htmlspecialchars($referer_url['path']);
+           //si sur edit, afficher les contacts de la structure concernée 
+          if (preg_match('/node\/(\d+)\/edit/', $path, $matches)) {
+            $node = \Drupal\node\Entity\Node::load($matches[1]);
+            if ($node instanceof \Drupal\node\NodeInterface) {
+              if (!empty($node->get('field_structure_associee')->getValue())) {
+                $terms = $node->get('field_structure_associee')->getValue();
+                $view->args[0] = $terms[0]['target_id'];
+                return;
+              }
+            }
+          }
+            // dsm($path);
+             //si sur ajout de formation, afficher tous les contact
+            //  if ($path ==='/node/add/formation') {
+              if (stripos(strtolower($path), '/node/add/formation') !== false) {
+              $view->args[0] = 'all';
+              return;
+            }
+        }
+      }
+
+      $structure_id = get_user_structure_from_role($current_user);
+
+      $view->args[0] = $structure_id;
+    }
+  }
+}
+
+/* */
+function reseau_mod_preprocess_responsive_image(&$variables) {
+  $style_id = $variables['responsive_image_style_id'];
+  if ($style_id === 'slider_principal') {
+    $variables['img_element']['#attributes']['height'] = 451;
+    // $variables['img_element']['#attributes']['width'] = 1920;
+  }
+}
+
+
+//Rend ccessible les contenus non publiés aux user associé à la structure du contenu non publié
+function reseau_mod_node_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($operation =="view") {
+    
+  if (!empty($entity->get('field_structure_associee')->getValue())) {
+
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
+    $structure_id = get_user_structure_from_role($current_user);
+ 
+    if ($entity->getEntityTypeId() == 'node') {
+    if ( $entity->field_structure_associee->target_id == $structure_id) {
+      return AccessResult::allowed();
+      }
+      if ( $current_user->hasRole('webmaster_reseau')) {
+        return AccessResult::allowed();
+      }
+      }
+    }
+  }
+
+  return AccessResult::neutral();
+}

@@ -1,0 +1,18 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image_principale_legende
+    - node.type.page_de_blog
+id: node.page_de_blog.field_image_principale_legende
+field_name: field_image_principale_legende
+entity_type: node
+bundle: page_de_blog
+label: 'Légende de l''image principale'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

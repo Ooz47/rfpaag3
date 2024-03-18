@@ -1,0 +1,102 @@
+<?php
+
+use Drupal\views\ViewExecutable;
+
+/**
+ * @file
+ * Contains reseau_mod_up_evenement.module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function reseau_mod_up_evenement_theme() {
+  $theme['block__views_block__agenda_block_3'] = [
+    'base hook' => 'agenda',
+  ];
+
+  return $theme;
+}
+
+//Modification des formulaire
+function reseau_mod_up_evenement_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+
+  if (($form_id === 'node_evenement_edit_form') || ($form_id === 'node_evenement_form')) {
+
+    $form['field_act_acc_structure']['#states'] = [
+      'invisible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+    $form['field_act_acc_reseau']['#states'] = [
+      'invisible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+  
+   
+    $form['field_act_structure_concernee']['#states'] = [
+      'visible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+        /* Retire option réseau dans structure concernée */
+if (isset($form['field_act_structure_concernee']['widget'])) {
+  unset($form['field_act_structure_concernee']['widget']['#options']['8']);
+}
+  }
+ 
+
+
+
+}
+
+
+/*REtire bulk operations sur page addin media*/
+function reseau_mod_up_evenement_views_pre_view(ViewExecutable $view, $display_id, array &$args)
+{
+ 
+  
+  if ($view->id() == 'agenda' && $display_id =="block_3") {
+
+
+
+  
+    $node = \Drupal::routeMatch()->getParameter('node');
+    //si on accede à un node: page,actus,evenement,contact,formaation,témoignage
+    if ($node instanceof \Drupal\node\NodeInterface) {
+
+      if ((doesBundleHaveField($node->getEntityTypeId(), $node->bundle(), 'field_structure_associee')) && (!empty($node->get('field_structure_associee')->getValue()))) {
+        $structureid = $node->get('field_structure_associee')->getValue();
+        
+        $filters = $view->getDisplay()->getOption('filters'); 
+        // dsm($filters);
+        $filters["field_structure_associee_target_id"]["value"] = [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+        $filters["field_act_structure_concernee_target_id"]["value"] =  [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+
+        $view->display_handler->overrideOption('filters', $filters);
+ 
+        // dsm($view);
+      //  $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($structureid[0]['target_id']);
+
+
+       $options = array(
+        'id' => 'area_text_custom',
+        'table' => 'views',
+        'field' => 'area_text_custom',
+        'relationship' => 'none',
+        'group_type' => 'none',
+        'admin_label' => '',
+        'empty' => TRUE,
+        'tokenize' => FALSE,
+        'content' => "<h2><span class=\"bleu\">".$node->getTitle()."</span> Agenda</h2>",
+        // 'content' => "<h2><span class=\"bleu\">".$term->getName()."</span> Actualité</h2>",
+        'plugin_id' => 'text_custom',
+      );
+      $view->setHandler('block_3', 'header', 'area_text_custom', $options);
+
+      }  
+    }
+}
+}

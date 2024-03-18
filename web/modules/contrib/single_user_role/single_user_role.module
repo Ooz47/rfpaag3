@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * @file
+ * Single User Role module file.
+ *
+ * It contains alterations to restrict particular user role to authenticated or
+ * any other role.
+ */
+
+use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\user\RoleInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function single_user_role_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'user_register_form' || $form_id === 'user_form') {
+    $element = &NestedArray::getValue($form, ['account', 'roles']);
+
+    // Make sure this module also works when role_delegation is enabled.
+    if (isset($form['role_change'])) {
+      // Making sure administrator also see role field with only one option to
+      // select.
+      if ($form['role_change']['#access']) {
+        $element = &NestedArray::getValue($form, ['role_change', 'widget']);
+      }
+    }
+
+    _single_user_role_edit_element($element);
+
+    // Add custom validation to be called before the core validation.
+    array_unshift($form['#validate'], 'single_user_role_form_validate');
+  }
+}
+
+/**
+ * Validation callback for single_user_role_form_alter().
+ *
+ * Transforms the roles value to be wrapped in an array that drupal
+ * core expects:
+ * eg: `['role_name' => 'role_name']`
+ *
+ * @param array $form
+ *   User form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   User form state.
+ */
+function single_user_role_form_validate(array &$form, FormStateInterface &$form_state) {
+  // Get the value of the selected role.
+  $role = $form_state->getValue('roles');
+
+  // Transform the roles value to be wrapped in an array.
+  if ($role && !is_array($role)) {
+    $form_state->setValue('roles', array_combine([$role], [$role]));
+  }
+
+  $original_role = $form['account']['roles']['#default_value'];
+  if ($original_role && !is_array($original_role)) {
+    $form['account']['roles']['#default_value'] = [$original_role];
+  }
+}
+
+/**
+ * Implements hook_form_ID_alter() for 'role_delegation_role_assign_form'.
+ */
+function single_user_role_form_role_delegation_role_assign_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  _single_user_role_edit_element($form['account']['role_change']);
+}
+
+/**
+ * Helper function that alters the role form element.
+ *
+ * @param $element
+ *   The form element that should be altered.
+ */
+function _single_user_role_edit_element(&$element) {
+  // Change role field type from checkbox to select or radio field.
+  $element['#type'] = \Drupal::config('single_user_role.settings')->get('single_user_role_field_type');
+  $element['#multiple'] = FALSE;
+  // Set role field help text.
+  $element['#description'] = \Drupal::config('single_user_role.settings')->get('single_user_role_field_desc');
+  // Set role field title singular.
+  $element['#title'] = t('Role');
+  // Enable authenticated role option.
+  $element['authenticated']['#disabled'] = FALSE;
+  // Fix default value for authenticated role.
+  unset($element['authenticated']['#default_value']);
+
+  // Always have authenticated role in options as radios cannot be unselected.
+  if (!isset($element['#options'][RoleInterface::AUTHENTICATED_ID])) {
+    $authenticated_role = [RoleInterface::AUTHENTICATED_ID => t('Authenticated user')];
+    $element['#options'] = array_merge($authenticated_role, $element['#options']);
+  }
+
+  // Set default role. Authenticated role is assigned if no other role found.
+  $default_role = 'authenticated';
+  foreach ($element['#default_value'] as $key => $value) {
+    if ($key !== 0) {
+      // Set first assigned role as default, excluding authenticated.
+      $default_role = $value;
+      break;
+    }
+  }
+  $element['#default_value'] = $default_role;
+}
+
+/**
+ * Implements hook_help().
+ */
+function single_user_role_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'single_user_role.config_form':
+      return '<p>' . t("This page allows to administer single user role module's configuration settings.") . '</p>';
+  }
+}

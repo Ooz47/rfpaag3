@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * Theme override for a link to a file.
+ *
+ * Available variables:
+ * - attributes: The HTML attributes for the containing element.
+ * - link: A link to the file.
+ * - file_size: The size of the file.
+ *
+ * @see template_preprocess_file_link()
+ */
+#}
+{# <span{{ attributes }}>{{ link }}</span> #}
+<span{{ attributes }}><a class="btn btn-primary" href="{{ link['#url'] }}" target="_blank">Télécharger la fiche</a></span>
+{# {{ kint(link.0) }} #}
+{# {% if file_size %}
+  <span>({{ file_size }})</span>
+{% endif %} #}

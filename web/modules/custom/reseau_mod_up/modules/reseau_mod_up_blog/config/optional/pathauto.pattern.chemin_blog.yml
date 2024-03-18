@@ -1,0 +1,21 @@
+langcode: fr
+status: true
+dependencies:
+  module:
+    - node
+id: chemin_blog
+label: 'chemin blog'
+type: 'canonical_entities:node'
+pattern: '[node:title]'
+selection_criteria:
+  70640207-ae62-442e-9737-2d0ca1674ef7:
+    id: node_type
+    negate: false
+    uuid: 70640207-ae62-442e-9737-2d0ca1674ef7
+    context_mapping:
+      node: node
+    bundles:
+      page_de_blog: page_de_blog
+selection_logic: and
+weight: -5
+relationships: {  }

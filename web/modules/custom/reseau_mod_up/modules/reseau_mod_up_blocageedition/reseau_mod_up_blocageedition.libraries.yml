@@ -1,0 +1,13 @@
+extra.contenusbloques:
+  css:
+    theme:
+      css/contenusbloques.css: {}
+
+extra.webmasterstructures:
+  css:
+    theme:
+      css/webmasterstructures.css: {}
+
+reseau_mod_up_blocageedition:
+  dependencies:
+    - core/drupal

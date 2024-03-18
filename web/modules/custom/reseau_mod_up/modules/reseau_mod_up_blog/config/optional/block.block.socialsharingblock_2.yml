@@ -1,0 +1,27 @@
+langcode: fr
+status: true
+dependencies:
+  module:
+    - node
+    - social_media
+  theme:
+    - reseau
+id: socialsharingblock_2
+theme: reseau
+region: content
+weight: 0
+provider: null
+plugin: social_sharing_block
+settings:
+  id: social_sharing_block
+  label: 'Partager l''article'
+  label_display: visible
+  provider: social_media
+visibility:
+  'entity_bundle:node':
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: '@node.node_route_context:node'
+    bundles:
+      page_de_blog: page_de_blog

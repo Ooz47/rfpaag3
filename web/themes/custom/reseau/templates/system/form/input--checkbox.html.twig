@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Theme override for an 'input' #type form element.
+ *
+ * Available variables:
+ * - attributes: A list of HTML attributes for the input element.
+ * - children: Optional additional rendered elements.
+ *
+ * @see template_preprocess_input()
+ */
+#}
+{%
+  set custom_classes = [
+   'form-check-input',
+  ]
+%}
+{# {% if 'error' in custom_classes %}
+{{ 'helo' }}
+{% endif %} #}
+<div class="form-check form-switch">
+<input{{ attributes.addClass(custom_classes) }} />{{ children }}
+</div>

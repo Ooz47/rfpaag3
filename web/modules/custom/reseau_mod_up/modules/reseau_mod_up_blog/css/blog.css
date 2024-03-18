@@ -1,0 +1,131 @@
+body.page-node-page_de_blog .breadcrumb .container-xl,
+body.page-node-page_de_blog main .container-xl
+ {
+  max-width:740px;
+}
+
+body.page-node-page_de_blog main h1, body.page-node-page_de_blog main .h1 {
+  margin: 0 0 3rem 0;
+
+}
+body.page-node-page_de_blog main h1::before, body.page-node-page_de_blog main .h1::before {
+display:none;
+
+}
+
+body.page-node-page_de_blog .contenuprincipal article .blazy--field-image-principale--default {
+  float: none; 
+padding-left: 0; 
+ width: 100%;
+  margin-left: 0;
+  margin-top: 40px;
+}
+
+body.page-node-page_de_blog .contenuprincipal article .blazy--field-image-principale--default img{
+margin: auto;
+}
+
+body.page-node-page_de_blog .image_principale_legende {
+
+  color: #737578;
+  font-size: .8125rem;
+  margin-top: 10px;
+}
+
+
+body.page-node-page_de_blog .texte_introduction {
+font-weight: 600;
+margin-bottom: 40px;
+
+
+}
+
+
+body.page-node-page_de_blog .texte_principal p:first-child {
+
+  margin-top: 40px;
+  
+  }
+
+body.page-node-page_de_blog #block-socialsharingblock-2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+body.page-node-page_de_blog main .contenuprincipal #block-socialsharingblock-2 ul li::before,
+body.page-node-page_de_blog main .contenuprincipal #block-socialsharingblock-2 ul li:last-child
+ {
+display: none;
+}
+
+body.page-node-page_de_blog .mots-cles-texte {
+  margin: 2.5rem 0 .5rem;
+}
+
+body.page-node-page_de_blog .mots-cles-texte div:last-child  {
+
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+body.page-node-page_de_blog .mots-cles-texte div:last-child div {
+
+  padding: .25rem .5rem;
+  border-radius: 5px;
+  border: 1px #ccc solid;
+}
+
+body.page-node-page_de_blog .contenuprincipal article .lecture,
+body.page-node-page_de_blog .contenuprincipal article .ecritPar
+ {
+  /* display: inline-block; */
+  font-size: 14px;
+  font-size: .875rem;
+  margin-right: 10px;
+
+}
+
+body.page-node-page_de_blog .contenuprincipal article .lecture::before,
+body.page-node-page_de_blog .contenuprincipal article .ecritPar::before
+ {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  margin: 0 5px 0 0;
+  color: #474747ad;
+  content: "\f2f2";
+  content: "\f252";
+  font-weight: 600;
+}
+
+body.page-node-page_de_blog .contenuprincipal article .ecritPar::before
+ {
+  content: "\f4ff";
+  content: "\f305";
+}
+body.page-node-page_de_blog .contenuprincipal article .ecritPar div:nth-child(2)
+ {
+  display: inline-block;
+}
+
+body.page-node-page_de_blog .contenuprincipal article .thematiques,
+body.page-node-page_de_blog .contenuprincipal article .structure
+ {
+  margin-bottom: 0;
+}
+
+#block-socialsharingblock-2 .partage_disabled {
+  background-image: url(/themes/custom/reseau/css/../img/partage_disabled.png);
+  height: 62px;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-left: -55px;
+}
+
+#block-socialsharingblock-2 .social-media-sharing {
+width: 100%;
+text-align: center;
+}

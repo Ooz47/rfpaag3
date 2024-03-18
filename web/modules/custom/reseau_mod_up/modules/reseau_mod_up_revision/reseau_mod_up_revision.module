@@ -1,0 +1,60 @@
+<?php
+
+/**
+ * @file
+ * Contains reseau_mod_up_revision.module.
+ */
+
+
+//Modification des formulaire
+function reseau_mod_up_revision_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+  $user = \Drupal::currentUser();
+  if($user->hasPermission('gerer les revisions')){
+
+   /*Gestion accès form Add et edit */
+   $nodetype = array(
+    "node_actualite_edit_form",
+   "node_evenement_edit_form",
+    "node_formation_edit_form",
+    "node_page_edit_form",
+    "node_structure_edit_form",
+  );
+
+  if (in_array($form_id, $nodetype)) {
+    $form['revision']['#access'] = TRUE;
+    // $form['status']['#access'] = TRUE;
+    $form['revision_log']['#access'] = TRUE;
+
+    // dsm($form);
+}
+
+
+  }
+
+}
+
+
+function reseau_mod_up_revision_menu_local_tasks_alter(&$data, $route_name, \Drupal\Core\Cache\RefinableCacheableDependencyInterface &$cacheability)
+{
+  $user = \Drupal::currentUser();
+  if($user->hasPermission('gerer les revisions')){
+    return;
+  }
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof \Drupal\node\NodeInterface) {
+    foreach ($data['tabs'][0] as $key => $tab) {
+      // dsm($tab);
+     
+      if ($tab['#link']['title'] == "Révisions") {
+
+        // dsm($data['tabs'][0][$key]['#link']['title']);
+        // dsm($data['tabs'][0][$key]);
+        $data['tabs'][0][$key]['#access'] = FALSE;
+      }
+
+    }
+  
+  }
+
+}

@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for menu_admin_per_menu module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+
+
+use Drupal\Component\Serialization\Yaml;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+
+
+
+function reseau_mod_up_evenement_install()
+{
+  module_set_weight('reseau_mod_up_evenement', 3);
+
+// reseau_mod_up_evenement_update_8001();
+}
+
+
+
+function reseau_mod_up_evenement_update_8001() {
+  $evenements = \Drupal::entityTypeManager()->getStorage('node')->loadByProperties(['type' => 'evenement']);
+  foreach ($evenements as $evenement) {
+    $evenement->set('field_act_acc_structure', TRUE);
+    $evenement->set('field_act_acc_reseau', TRUE);
+    $evenement->save();
+  }
+}

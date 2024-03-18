@@ -1,0 +1,39 @@
+reseau.xs:
+  label: xs
+  mediaQuery: "(min-width: 0px)"
+  weight: 1
+  multipliers:
+    - 1x
+    - 2x
+reseau.sm:
+  label: sm
+  mediaQuery: "(min-width: 576px)"
+  weight: 2
+  multipliers:
+    - 1x
+    - 2x
+reseau.md:
+  label: md
+  mediaQuery: "(min-width: 768px)"
+  weight: 3
+  multipliers:
+    - 1x
+    - 2x
+reseau.lg:
+  label: lg
+  mediaQuery: "(min-width: 992px)"
+  weight: 4
+  multipliers:
+    - 1x
+reseau.xl:
+  label: xl
+  mediaQuery: "(min-width: 1200px)"
+  weight: 5
+  multipliers:
+    - 1x
+reseau.xxl:
+  label: xxl
+  mediaQuery: "(min-width: 1400px)"
+  weight: 6
+  multipliers:
+    - 1x

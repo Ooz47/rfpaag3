@@ -1,0 +1,3 @@
+filename: '[node:nid].pdf'
+tempDir: 'sites/default/files/entity_pdf'
+openInBrowser: false

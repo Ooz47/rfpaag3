@@ -1,0 +1,7 @@
+extra.indexation:
+  js:
+    js/indexation.js: {}
+
+reseau_mod_up_nonindexe:
+  dependencies:
+    - core/drupal

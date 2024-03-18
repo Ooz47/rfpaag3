@@ -1,0 +1,11 @@
+extra.privee:
+  css:
+    theme:
+      css/privee-back.css: {}
+
+reseau_mod_up_pageprivee:
+  css:
+    theme:
+      css/privee-front.css: {}
+  dependencies:
+    - core/drupal

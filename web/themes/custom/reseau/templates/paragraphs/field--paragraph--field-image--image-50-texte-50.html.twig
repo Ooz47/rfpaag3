@@ -1,0 +1,151 @@
+{#
+/**
+ * @file
+ * Theme override for a field.
+ *
+ * To override output, copy the "field.html.twig" from the templates directory
+ * to your theme's directory and customize it, just like customizing other
+ * Drupal templates such as page.html.twig or node.html.twig.
+ *
+ * Instead of overriding the theming for all fields, you can also just override
+ * theming for a subset of fields using
+ * @link themeable Theme hook suggestions. @endlink For example,
+ * here are some theme hook suggestions that can be used for a field_foo field
+ * on an article node type:
+ * - field--node--field-foo--article.html.twig
+ * - field--node--field-foo.html.twig
+ * - field--node--article.html.twig
+ * - field--field-foo.html.twig
+ * - field--text-with-summary.html.twig
+ * - field.html.twig
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - label_hidden: Whether to show the field label or not.
+ * - title_attributes: HTML attributes for the title.
+ * - label: The label for the field.
+ * - multiple: TRUE if a field can contain multiple items.
+ * - items: List of all the field items. Each item contains:
+ *   - attributes: List of HTML attributes for each item.
+ *   - content: The field item's content.
+ * - entity_type: The entity type to which the field belongs.
+ * - field_name: The name of the field.
+ * - field_type: The type of the field.
+ * - label_display: The display settings for the label.
+ *
+ * @see template_preprocess_field()
+ */
+#}
+{{ attach_library('reseau/cartesvg') }}
+{%
+  set classes = [
+    'col-sm-5',
+  'col-md-6',
+  'col-12'
+  ]
+%}
+{%
+  set title_classes = [
+    label_display == 'visually_hidden' ? 'visually-hidden',
+  ]
+%}
+
+{% if label_hidden %}
+  {% if multiple %}
+    <div{{ attributes.addClass(classes) }}>
+      {% for item in items %}
+        <div{{ item.attributes }}>{{ item.content }}</div>
+      {% endfor %}
+    </div>
+  {% else %}
+    {% for item in items %}
+      <div{{ attributes.addClass(classes) }}>{{ item.content }}</div>
+    {% endfor %}
+  {% endif %}
+{% else %}
+  <div{{ attributes.addClass(classes) }}>
+    <div{{ title_attributes.addClass(title_classes) }}>{{ label }}</div>
+    {% if multiple %}
+      <div>
+    {% endif %}
+    {% for item in items %}
+     {# {{ dd(item) }} #}
+     {# {{ item['content']['#media']|file_url }} #}
+{# Intégration du svg animation accueil #}
+     {%
+  set html = "<figure id=cartecontainer >
+	<svg class=\"cartesvg\" version=\"1.1\"   width=\"100%\" height=\"100%\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" 
+  viewBox=\"0 0 1024 768\" preserveAspectRatio=\"xMinYMin meet\" >
+	<image width=\"1024\" height=\"768\" xlink:href=\""~ item['content']['#media']|file_url ~"\">
+	</image>
+	    </svg>  
+
+<svg class=\"cartesvg\" version=\"1.1\" width=\"100%\" height=\"100%\"    xmlns=\"http://www.w3.org/2000/svg\" 
+xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 1024 768\" preserveAspectRatio=\"xMinYMin meet\" >
+                <circle
+               style=\"opacity:1;fill:#ff5722;fill-opacity:1;fill-rule:nonzero;paint-order:normal\"
+               id=\"path1394\"
+               cx=\"699.866\"
+               cy=\"430.14\"
+               r=\"7.1815472\" />
+               <circle class = \"pulse\" id =\"greta\" cx = \"699.866\" cy = \"430.14\" r = \"22px\"></circle>
+            
+            <circle
+            r=\"6.4850121\"
+            cy=\"418.833704\"
+            cx=\"700.46841\"
+            id=\"path1394-5\"
+            style=\"opacity:1;fill:#ff5722;fill-opacity:1;fill-rule:nonzero;
+            paint-order:normal\" />
+            <circle class = \"pulse\" 
+            id =\"cfapag\" cx = \"700.46841\" cy = \"418.833704\" r = \"22px\"></circle>
+
+
+            <circle
+            r=\"6.4850121\"
+            cy=\"452.016388\"
+            cx=\"622.4104\"
+            id=\"path1394-5-5\"
+            style=\"opacity:1;fill:#ff5722;fill-opacity:1;fill-rule:nonzero;
+            paint-order:normal\" />
+            <circle class = \"pulse\" 
+            id =\"baiemahault\" cx = \"622.4104\" cy = \"452.016388\" 
+            r = \"22px\"></circle>
+
+
+            <circle
+            r=\"6.4850121\"
+            cy=\"218.833704\"
+            cx=\"302.46841\"
+            id=\"path1394-5-4\"
+               style=\"opacity:1;fill:#ff5722;fill-opacity:1;fill-rule:nonzero;
+            paint-order:normal\" />
+            <circle class = \"pulse\" id =\"stbarth\" cx = \"302.46841\" cy = \"218.833704\" r = \"22px\"></circle>
+
+
+         <circle
+           
+            r=\"6.4850121\"
+            cy=\"71.148491\"
+            cx=\"120.77747\"
+            id=\"path1394-5-9\"
+              style=\"opacity:1;fill:#ff5722;fill-opacity:1;fill-rule:nonzero;
+            paint-order:normal\" />
+             <circle class = \"pulse\" id =\"stmartin\" cx = \"120.77747\" cy = \"71.148491\" r = \"22px\"></circle>
+        
+        </svg> 
+
+
+</figure>"
+%}
+ {{ html | raw}}
+      {# <div{{ item.attributes }}>{{ item.content }}</div> #}
+    {% endfor %}
+    {% if multiple %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+ {# {{ kint(item) }} #}
+    
+      

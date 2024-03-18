@@ -1,0 +1,8 @@
+extra.user:
+  js:
+    js/printbutton.js: {}
+
+reseau_mod_up_exportpdf:
+  dependencies:
+    - core/drupal
+    - core/drupalSettings

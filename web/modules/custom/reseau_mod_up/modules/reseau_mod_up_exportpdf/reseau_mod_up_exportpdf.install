@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for menu_admin_per_menu module.
+ */
+
+
+/**
+ * Implements hook_install().
+ */
+
+
+
+function reseau_mod_up_exportpdf_install()
+{
+  module_set_weight('reseau_mod_up_exportpdf', 3);
+
+
+}
+

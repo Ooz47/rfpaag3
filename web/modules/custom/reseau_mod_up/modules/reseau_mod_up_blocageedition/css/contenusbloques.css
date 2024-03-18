@@ -1,0 +1,10 @@
+form.is-disabled .layout-node-form {
+
+  filter: blur(3px);
+  -webkit-filter: blur(3px);
+  pointer-events: none
+}
+
+form.is-disabled #edit-delete {
+  display: none;
+}

@@ -1,0 +1,6 @@
+#version: 1.1
+name: Module Réseau Greta CFA
+description: Module spécifique Réseau Greta CFA Guadeloupe
+package: custom
+type: module
+core_version_requirement: ^9

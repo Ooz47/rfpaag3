@@ -1,0 +1,5 @@
+services:
+  reseau_mod.route_subscriber:
+    class: Drupal\reseau_mod\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

@@ -1,0 +1,145 @@
+.contraste {
+  color: #fff!important;
+  background: #000000e6!important;
+  filter: none!important;
+
+.profil,.actualitesagenda, .actualites-view .views-field-nothing .row,
+#block-views-block-agenda-block-1, #block-views-block-agenda-block-2,.basdepage,.marquee,aside .block-menu {
+  background: #000000e6!important;
+}
+.agenda-view .slick--view.slick--view--agenda,footer,.header, .offcanvas, aside .block-menu ul.menu li a:hover
+{
+  background: #191919!important;
+}
+
+.header > header .row  {
+  background: transparent;
+}
+.recherche-formations .row .form-actions input,
+.btn-primary,
+.resultats .row .views-field-nothing,
+.resultats .row .views-field-nothing-1,
+.resultats .row .views-field-nothing-2,
+.resultats .row .views-field-field-candidats-vae,
+.resultats .row .views-field-field-stagiaires,
+.agenda-view .ligne .date
+ {
+ 
+  background: #00615E;
+
+}
+
+aside .block-menu ul.menu li a.is-active {
+  background: #00615E !important;
+}
+
+.agenda-view .titre a {
+  color: #009e99;
+}
+.views-field-field-slogan .-gip-daifi a {
+  color: #657df5;
+}
+
+#block-logosstructuresquisommesnous, .menu-logo, .menu-logo:after, .menu-logo:before, #block-views-block-sliders-block-1 {
+  background: #FFF;
+}
+.offcanvas-body ul.menu-level-0 > li.menu-item--expanded > .menu_link_content li a {
+  color:#b3b6bb;
+}
+.agenda-view .ligne .contenus .lieu::before, .agenda-view .ligne .contenus .type_evenement::before, .agenda-view .ligne .contenus .thematiques::before,
+.btn-header, #views-exposed-form-recherche-page-1 #edit-submit-recherche, #views-exposed-form-recherche-page-1 #edit-submit-recherche--2,
+.offcanvas-body ul.menu-level-0 > li.menu-item--expanded > a,
+aside .block-menu ul.menu li a
+{
+  color: #fff;
+}
+
+
+aside #block-views-block-sliders-block-2 .col-4 img {
+  height: 65px;
+}
+
+aside #block-views-block-sliders-block-2 {
+  background: none;
+}
+
+.AccessBtn {
+  a{
+   color: $blanc;
+  }
+
+text-align: center;
+ a.AccessBtn-plus {
+   font-size: 17px;
+   font-weight: 600;
+   padding: 0 4px;
+}
+a.AccessBtn-moins {
+ font-size: 12px;
+ font-weight: 600;
+}
+
+a.AccessBtn-contraste {
+ background: $noir;
+}
+
+}
+
+
+.slick--view--sliders--block-3 img {
+  opacity: .5;
+}
+.nav-tabs .nav-link {
+  background: #000;
+}
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  background-color: #e6f5f5;}
+
+  .breadcrumb #block-reseau-breadcrumbs ol li a,
+  .breadcrumb #block-reseau-breadcrumbs ol li {
+    color: #ffffff;
+}
+
+
+.accordion-item {
+  background-color: transparent;
+  .accordion-button:not(.collapsed) {
+    color: #fff;
+    background-color: #000;
+    box-shadow: inset 0 -1px 0 #edf2f5;
+}
+.accordion-button {
+  color: #fff;
+  background-color: transparent;
+
+}
+
+}
+
+main .blocwysiwyg.croche {
+
+  background: transparent;
+  border: 1px solid #f5f9fc;
+}
+
+.card {
+  background-color: transparent;
+}
+
+.actualites-view .views-field-nothing .row .coltexte .date::before, .actualites-view .views-field-nothing .row .coltexte .structure::before, .actualites-view .views-field-nothing .row .coltexte .thematiques::before {
+  color: #fff;
+}
+
+
+main table {
+  color: #fff;
+}
+
+.layout-sidebar-first .views-exposed-form details.form-wrapper .js-form-type-checkbox label {
+  color: #474747;
+}
+
+
+
+}
+

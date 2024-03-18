@@ -1,0 +1,260 @@
+<?php
+
+use Drupal\pathauto\Entity\PathautoPattern;
+use Drupal\views\ViewExecutable;
+
+
+/**
+* Implements hook_views_pre_render().
+*/
+function reseau_mod_up_blog_views_pre_render(ViewExecutable $view) {
+  // dsm($view->storage->id());
+  if (isset($view) && ($view->storage->id() == 'blog')) {
+    $view->element['#attached']['library'][] = 'reseau_mod_up_blog/extra.blogview';
+  }
+}
+/**
+ * @file
+ * Contains reseau_mod_up_blog.module.
+ */
+
+function reseau_mod_up_blog_page_attachments_alter(array &$attachments)
+{
+
+  /*ajoute css admin*/
+  $admin_theme = \Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = \Drupal::service('theme_handler')->getName($admin_theme);
+  if ($admin_theme_name == 'Seven') {
+    $attachments['#attached']['library'][] = 'reseau_mod_up_blog/extra.admin';
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function reseau_mod_up_blog_theme()
+{
+
+  $theme['page__page_de_blog'] = [
+    'base hook' => 'page',
+  ];
+
+  // $theme['page__blog'] = [
+  //   'base hook' => 'page',
+  // ];
+
+  $theme['node__page_de_blog__full'] = [
+    'base hook' => 'node',
+  ];
+
+
+  return $theme;
+}
+
+
+
+/**
+ * Implements hook_theme_suggestions_page_alter().
+ */
+function reseau_mod_up_blog_theme_suggestions_page_alter(array &$suggestions, array $variables)
+{
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof \Drupal\node\NodeInterface) {
+    //on tcheck si ce champs existe pour pour éviter les page type views 
+    if (!empty($node->get('field_structure_associee')->getValue())) {
+      if (\Drupal::theme()->getActiveTheme()->getName() != 'seven') {
+
+        $suggestions[] = 'page__' . $node->bundle();
+      }
+    }
+  }
+}
+
+
+//Renseigne valeur par défault du champ structure associée à la création d'un node, en fonction de l'utilisateur courant
+function reseau_mod_up_blog_node_field_values_init(\Drupal\Core\Entity\FieldableEntityInterface $entity)
+{
+  $nodetype = array("page_de_blog");
+  if (in_array($entity->getType(), $nodetype)) {
+    fill_initial_values($entity);
+  }
+}
+
+
+//Modification des formulaire
+function reseau_mod_up_blog_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+
+  // dsm($form);
+  if (($form_id === 'node_page_de_blog_edit_form') || ($form_id === 'node_page_de_blog_form')) {
+
+    $form['status']['#access'] = TRUE;
+    $form['created']['#access'] = TRUE;
+
+    // if (isset($form['index_now'])) {
+    //   $form['index_now']['#access'] = FALSE;
+    // }
+
+    if (isset($form['simple_sitemap_index_now'])) {
+      $form['simple_sitemap_index_now']['#access'] = FALSE;
+    }
+
+    $form['field_act_acc_structure']['#states'] = [
+      'invisible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+    $form['field_act_acc_reseau']['#states'] = [
+      'invisible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+    $form['field_act_structure_concernee']['#states'] = [
+      'visible' => [
+        ':input[name="field_structure_associee"]' => ['value' => '8'],
+      ],
+    ];
+    /* Retire option réseau dans structure concernée */
+    if (isset($form['field_act_structure_concernee']['widget'])) {
+      unset($form['field_act_structure_concernee']['widget']['#options']['8']);
+    }
+
+    $user = \Drupal::currentUser();
+    if($form_id === 'node_page_de_blog_edit_form') {
+    if ($user->hasPermission('gerer les revisions')) {
+
+      $form['revision']['#access'] = TRUE;
+      $form['revision_log']['#access'] = TRUE;
+    }
+  }
+    if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+      return;
+    }
+
+    get_autorisation_access();
+
+    if (isset($form['field_act_epingle']['widget'])) {
+      // $form['field_act_epingle']['widget']['#access'] = false;
+      $form['field_act_epingle']['#attributes']['class'][] = 'hidden';
+    }
+    $form['field_structure_associee']['widget']['#disabled'] = TRUE;
+  }
+
+
+
+  /* Gestion delete */
+  $nodetype = array(
+    "node_page_de_blog_delete_form",
+  );
+
+  if (in_array($form_id, $nodetype)) {
+    get_autorisation_access();
+
+    // if (isset($form['index_now'])) {
+    //   $form['index_now']['#access'] = FALSE;
+    // }
+    if (isset($form['simple_sitemap_index_now'])) {
+      $form['simple_sitemap_index_now']['#access'] = FALSE;
+    }
+  }
+}
+
+
+function reseau_mod_up_blog_pathauto_pattern_alter(PathautoPattern &$pattern, array $context)
+{
+  // When nodes are created or updated, alter pattern with criteria logic.
+  if ($context['module'] == 'node' && ($context['op'] == 'insert' || $context['op'] == 'update' || $context['op'] == 'bulkupdate')) {
+    /** @var \Drupal\node\Entity\Node $node */
+    $node = $context['data']['node'];
+    $replacements = [];
+    switch ($node->getType()) {
+      case 'page_de_blog':
+        if (!empty($node->get('field_structure_associee')->getValue())) {
+          $tags = $node->get('field_structure_associee')
+            ->first()
+            ->get('entity')
+            ->getTarget()
+            ->getValue();
+
+          $terms = $node->get('field_structure_associee')->getValue();
+          if ($terms[0]['target_id'] != WEBMASTER_RESEAU) {
+            $replacements[] = '[node:field_structure_associee:entity:name]';
+          }
+        }
+        $replacements[] = 'blog/[node:title]';
+
+        break;
+
+
+      default:
+        break;
+    }
+    if ($replacements) {
+      // Split the replacements with slashes for URL.
+      $replacements = implode('/', $replacements);
+
+      // Replace default [node:title] with logic-derived tokens.
+      $pattern->setPattern(preg_replace('/\[node:title(\:[^]]*)?\]/', $replacements . '$1', $pattern->getPattern()));
+    }
+  }
+}
+
+
+/* Remplace filter de view en fonction de la structure en cours de visionnage */
+function reseau_mod_up_blog_views_pre_view(ViewExecutable $view, $display_id, array &$args)
+{
+ 
+  if ($view->id() == 'blog' && ($display_id =="block_2" || $display_id =="block_4")) {
+  
+    $node = \Drupal::routeMatch()->getParameter('node');
+    //si on accede à un node: page,actus,evenement,contact,formation,témoignage
+    if ($node instanceof \Drupal\node\NodeInterface) {
+
+      if ((doesBundleHaveField($node->getEntityTypeId(), $node->bundle(), 'field_structure_associee')) && (!empty($node->get('field_structure_associee')->getValue()))) {
+        $structureid = $node->get('field_structure_associee')->getValue();
+   
+        $filters = $view->getDisplay()->getOption('filters');
+              
+        if ( $display_id =="block_2") {
+          // On met à jour les filtres selon structure vue
+          $filters["field_structure_associee_target_id"]["value"] = [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+          $filters["field_act_structure_concernee_target_id"]["value"] =  [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+          $view->display_handler->overrideOption('filters', $filters);
+         
+          $options = array(
+            'id' => 'area_text_custom',
+            'table' => 'views',
+            'field' => 'area_text_custom',
+            'relationship' => 'none',
+            'group_type' => 'none',
+            'admin_label' => '',
+            'empty' => TRUE,
+            'tokenize' => FALSE,
+            'content' => "<h2><span class=\"bleu\">".$node->getTitle()."</span> Blog</h2>",
+            // 'content' => "<h2><span class=\"bleu\">".$term->getName()."</span> Actualité</h2>",
+            'plugin_id' => 'text_custom',
+          );
+          
+          $view->setHandler('block_2', 'header', 'area_text_custom', $options);
+        }
+
+        } else {
+          //display 4 : a lire aussi
+        if($structureid[0]['target_id'] != '8'){
+          //Si sur page de blog associé à autre que réseau, on mets à jours les filtres
+          // sinon on conserve tous les résultats
+          $filters["field_structure_associee_target_id"]["value"] = [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+          $filters["field_act_structure_concernee_target_id"]["value"] =  [$structureid[0]['target_id'] => (int)$structureid[0]['target_id']];
+          $view->display_handler->overrideOption('filters', $filters);
+        
+        }
+      }
+
+        
+//  dsm($filters);
+      //  $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($structureid[0]['target_id']);
+
+  
+    }
+}
+}

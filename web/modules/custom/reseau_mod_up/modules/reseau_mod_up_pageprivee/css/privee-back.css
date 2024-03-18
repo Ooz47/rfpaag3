@@ -1,0 +1,9 @@
+form.node-page-form #edit-field-password-0 .password-strength .password-strength__title,
+form.node-page-edit-form #edit-field-password-0 .password-strength .password-strength__title
+/* ,
+
+form.node-edit-form #edit-field-password-0 .password-strength */
+ {
+display:none;
+
+}

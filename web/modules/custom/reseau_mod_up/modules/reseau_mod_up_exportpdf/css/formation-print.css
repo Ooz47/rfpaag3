@@ -1,0 +1,338 @@
+/* @font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: normal;
+  src: url(../fonts/Open_Sans/static/OpenSans-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans';
+  font-style: bold;
+  font-weight: 600;
+  src: url(../fonts/Open_Sans/static/OpenSans-SemiBold.ttf) format('truetype');
+} */
+
+.inline-block {
+  /* display: inline-block; */
+  float: left;
+  width: 49%;
+}
+
+
+/*-----*/
+
+
+@page {
+  margin: 0px;
+}
+
+body {
+  margin: 0px;
+}
+body {
+  font-family: 'DejaVuSans';
+  font-family: 'Open Sans';
+  font-size: 13px;
+  line-height: 20px;
+  /* letter-spacing: -0.5px; */
+}
+h1,h2,h3,h4,h5,h6 {
+  font-size: 13x;
+  line-height: 20px;
+}
+.libelle-resultat {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.row-structure {
+  width: 100%;
+  clear: both;
+}
+
+.column_gauche {
+  background-color: #009e99;
+  color: #fff;
+  float: left;
+  width: 250px;
+ /* padding-bottom: 20px; */
+}
+
+.field_fmt_image  { margin-top: -12px;}
+
+.column_droite_entete {
+
+    margin-left: 285px;
+  }
+.column_droite {
+/* margin-top: 100px; */
+  margin-left: 285px;
+}
+
+
+
+.column_gauche,
+.column_droite {
+
+  padding: 13px;
+}
+
+.label {
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #b8cf30;
+}
+
+.vignettes_formation img{
+  width: 100px;
+}
+
+.vignettes_formation .img{
+  float: right;
+  width: 100px;
+}
+
+
+.column_gauche .field_node_formation {
+  margin-bottom: 10px;
+  /* page-break-inside: avoid; */
+  /* display: block; */
+}
+.field_code_cpf,
+.field_formacode,
+.field_fmt_code_diplome,
+.field_fmt_code_rncp
+ {
+  float: left;
+  width: 50%;
+}
+.field_node_formation {
+  margin-bottom: 10px;
+
+}
+
+.column_droite .field_node_formation {
+    margin-bottom: 20px;
+  }
+
+  .field_node_formation.field_heures_en_centre,
+  .field_node_formation.field_heures_en_entreprise {
+  margin-bottom: 0;
+ 
+}
+
+.field_heures_en_centre .label,
+.field_heures_en_entreprise .label {
+  text-transform: none;
+  font-weight: 400;
+  /* float: left; */
+  margin-right: 10px;
+}
+
+.field_heures_en_centre .label::after,
+.field_heures_en_entreprise .label::after {
+  /* content: ":"; */
+
+}
+
+.field_node_formation.field_heures_en_centre>div,
+.field_node_formation.field_heures_en_entreprise>div {
+    float: left;
+}
+
+.field_fmt_grand_champ {
+  clear: both;
+}
+
+.field_node_formation..field_heures_en_centre div p,
+.field_node_formation..field_heures_en_entreprise div p {
+  /* margin: 0; */
+  /* float: left; */
+}
+
+.field_node_formation.field_heures_en_entreprise {
+  clear: both;
+  margin-bottom: 10px;
+}
+
+.visually-hidden {
+  display: none;
+
+}
+.field_resultats_formation {
+  float: left;
+  width: 100%;
+  
+}
+.resultat-formation {
+  width: 50%;
+  float: left;
+  margin-right: 15px;
+  margin-bottom: 15px;
+  /* page-break-inside: avoid; */
+}
+
+
+
+
+.entetepdf {
+  width: 100%;
+padding-top: 20px;
+margin-bottom: 20px;
+  /* height: 100px;; */
+}
+
+.col-logo {
+    /* width: 285px */
+   float: left;
+    width: 40%;
+    
+  }
+
+  .col-logo .col-4 {
+    width: 30%;
+    float: left;
+
+  }
+  
+  .col-logo .slick--view--sliders--block-2 {
+    width: 66.66667%;
+    float: left;
+  }
+
+
+
+.entetepdf h2{
+    /* float: right; */
+  /* width: 90%; */
+  /* margin:auto; */
+  padding: 0 10px;
+  text-align: center;
+  color: #009e99;
+  font-size: 24px;
+  /* clear: both; */
+  line-height: 30px;
+}
+
+.entetepdf h2 a {
+  text-decoration: none;
+  color: #009e99;
+}
+
+a {
+  color: #FFF;
+}
+.column_droite a {
+  color: #009e99;
+}
+
+p {
+  margin: 0;
+}
+
+/*CFAPAG*/
+
+article.structure-4 .label
+{
+  color: #2c5d85;
+}
+
+article.structure-4 .column_gauche {
+  background-color: #cd6a14;
+}
+article.structure-4 .entetepdf h2,
+article.structure-4 .h2,
+article.structure-4 .entetepdf h2 a,
+article.structure-4 .h2 a
+{
+  color: #cd6a14;
+}
+
+article.structure-4 .column_droite a {
+  color: #cd6a14;
+}
+
+/*CAPSBH*/
+
+
+article.structure-5 .label
+{
+  color: #f0e4b0;
+  text-shadow: 1px 1px #958129;
+}
+
+article.structure-5 .column_droite .label
+{
+  text-shadow: 1px 1px #958129;
+}
+
+article.structure-5 .column_gauche {
+  background-color: #7292bc;
+}
+article.structure-5 .entetepdf h2,
+article.structure-5 .h2,
+article.structure-5 .entetepdf h2 a,
+article.structure-5 .h2 a
+{
+  color: #7292bc;
+}
+
+article.structure-5 .column_droite a {
+  color: #7292bc;
+}
+
+/*GIP*/
+article.structure-3 .label
+{
+  color: #f39200;
+}
+
+article.structure-3 .column_gauche
+ {
+  background-color: #253274;
+}
+article.structure-3 .entetepdf h2,
+article.structure-3 .h2,
+article.structure-3 .entetepdf h2 a,
+article.structure-3 .h2 a
+{
+  color: #253274;
+}
+article.structure-3 .column_droite a {
+  color: #253274;
+}
+
+/*GRETA SXM*/
+article.structure-2 .label
+{
+  color: #009e99;
+
+}
+
+article.structure-2 .column_gauche
+ {
+  background-color: #b8cf30;
+}
+article.structure-2 .entetepdf h2,
+article.structure-2 .h2,
+article.structure-2 .entetepdf h2 a,
+article.structure-2 .h2 a
+{
+  color: #b8cf30;
+
+}
+
+article.structure-2 .column_droite a {
+  color: #b8cf30;
+}
+
+table {
+  /* font-weight: inherit; */
+  font-size: 13px;
+  /* line-height: inherit; */
+
+}
+
+.column_gauche table {
+  color: #fff;
+}

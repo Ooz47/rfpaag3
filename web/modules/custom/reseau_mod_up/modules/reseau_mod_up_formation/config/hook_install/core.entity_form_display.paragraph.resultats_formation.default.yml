@@ -1,0 +1,41 @@
+uuid: 358029aa-4372-42be-8640-b08eab2fec49
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.resultats_formation.field_libelle_resultat
+    - field.field.paragraph.resultats_formation.field_precisions_resultat
+    - field.field.paragraph.resultats_formation.field_valeur_resultat
+    - paragraphs.paragraphs_type.resultats_formation
+  module:
+    - reseau_mod_up
+id: paragraph.resultats_formation.default
+targetEntityType: paragraph
+bundle: resultats_formation
+mode: default
+content:
+  field_libelle_resultat:
+    type: field_libelle_resultat_widget
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_precisions_resultat:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_valeur_resultat:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

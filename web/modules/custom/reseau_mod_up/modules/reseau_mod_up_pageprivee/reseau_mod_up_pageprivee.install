@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for reseau_mod_up_pageprivee module.
+ */
+
+
+
+
+use Drupal\Component\Serialization\Yaml;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+
+
+
+function reseau_mod_up_pageprivee_install()
+{
+  module_set_weight('reseau_mod_up_pageprivee', 3);
+
+}
+

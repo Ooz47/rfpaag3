@@ -1,0 +1,191 @@
+uuid: 314b0f96-0a13-49c2-8e0d-2b40f96f5327
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.evenement.body
+    - field.field.node.evenement.field_act_acc_reseau
+    - field.field.node.evenement.field_act_acc_structure
+    - field.field.node.evenement.field_act_structure_concernee
+    - field.field.node.evenement.field_date_evenement
+    - field.field.node.evenement.field_image_principale
+    - field.field.node.evenement.field_lieu
+    - field.field.node.evenement.field_structure_associee
+    - field.field.node.evenement.field_thematiques
+    - field.field.node.evenement.field_type_d_evenement
+    - image.style.large
+    - image.style.wide
+    - node.type.evenement
+  module:
+    - blazy
+    - field_formatter_class
+    - field_group
+    - smart_date
+    - text
+    - user
+third_party_settings:
+  field_group:
+    group_evenement_details:
+      children:
+        - field_date_evenement
+        - group_evenement_tags
+      label: 'evenement details'
+      parent_name: ''
+      region: content
+      weight: 1
+      format_type: html_element
+      format_settings:
+        classes: flex-sm-row
+        show_empty_fields: false
+        id: evenement-details
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_evenement_tags:
+      children:
+        - field_lieu
+        - field_structure_associee
+        - field_thematiques
+        - field_type_d_evenement
+      label: evenement-tags
+      parent_name: group_evenement_details
+      region: content
+      weight: 3
+      format_type: html_element
+      format_settings:
+        classes: 'col-11 col-sm-6 col-md-7 col-lg-8 col-xl-9'
+        show_empty_fields: false
+        id: evenement-tags
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+id: node.evenement.default
+targetEntityType: node
+bundle: evenement
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_date_evenement:
+    type: smartdate_default
+    label: visually_hidden
+    settings:
+      timezone_override: ''
+      format_type: medium
+      format: date_evenement
+      force_chronological: false
+      add_classes: true
+      time_wrapper: false
+    third_party_settings:
+      field_formatter_class:
+        class: 'text-align-center my-3 col-7 col-sm-6 col-md-5 col-lg-4 col-xl-3'
+    weight: 2
+    region: content
+  field_image_principale:
+    type: blazy_media
+    label: visually_hidden
+    settings:
+      caption:
+        title: '0'
+        alt: '0'
+      class: ''
+      id: ''
+      image: ''
+      link: ''
+      overlay: ''
+      title: ''
+      vanilla: false
+      layout: ''
+      view_mode: default
+      cache: 0
+      current_view_mode: default
+      skin: ''
+      fx: ''
+      lazy: ''
+      loading: lazy
+      preload: false
+      style: ''
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      responsive_image_style: ''
+      box_style: wide
+      image_style: large
+      media_switch: colorbox
+      ratio: ''
+      thumbnail_style: ''
+      _item: ''
+      _uri: ''
+      grid_header: ''
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 2
+    region: content
+  field_lieu:
+    type: text_default
+    label: visually_hidden
+    settings: {  }
+    third_party_settings:
+      field_formatter_class:
+        class: lieu
+    weight: 4
+    region: content
+  field_structure_associee:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: structure
+    weight: 5
+    region: content
+  field_thematiques:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: thematiques
+    weight: 6
+    region: content
+  field_type_d_evenement:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: type_evenement
+    weight: 7
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_act_acc_reseau: true
+  field_act_acc_structure: true
+  field_act_structure_concernee: true
+  langcode: true
+  search_api_excerpt: true

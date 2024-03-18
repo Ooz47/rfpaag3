@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * Theme override for a link to a file.
+ *
+ * Available variables:
+ * - attributes: The HTML attributes for the containing element.
+ * - link: A link to the file.
+ * - file_size: The size of the file.
+ *
+ * @see template_preprocess_file_link()
+ */
+#}
+{# <span{{ attributes }}>{{ link|merge({'#attributes': {'target': '_blank'}}) }}</span> #}
+
+{% if link is iterable %}
+<span{{ attributes }}>{{ link|merge({'#attributes': {'target': '_blank'}}) }}</span>
+{% else %}
+<span{{ attributes }}>{{ link }}</span>
+{% endif %}
+
+{# <span{{ attributes }}><a class="btn btn-primary" href="{{ link['#url'] }}" target="_blank">Télécharger la fiche</a></span> #}
+{# {{ attributes  }} #}
+ {# {{ kint(link['#title_attributes']) }} #}
+ {# {{ kint(link) }} #}
+{# {% if file_size %}
+  <span>({{ file_size }})</span>
+{% endif %} #}

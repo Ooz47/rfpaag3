@@ -1,0 +1,8 @@
+#version: 1.0
+name: Module Réseau Greta CFA Extended
+description: Module spécifique Réseau Greta CFA Guadeloupe - Ajout de fonctionnalités
+package: custom
+type: module
+core_version_requirement: ^9
+dependencies:
+  - reseau_mod:reseau_mod

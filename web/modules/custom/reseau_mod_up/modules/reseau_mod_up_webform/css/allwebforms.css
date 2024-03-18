@@ -1,0 +1,10 @@
+.text-count-wrapper {
+    font-size: .8rem;
+color: #474747;
+font-style: italic;
+}
+
+.text-count-wrapper.webform-counter-warning {
+    color: #a11623;
+    font-weight: bold;
+}

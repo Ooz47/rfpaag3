@@ -1,0 +1,22 @@
+uuid: 08ef450a-a708-4612-8950-e12892b4dfc0
+langcode: fr
+status: true
+dependencies:
+  config:
+    - node.type.page_de_blog
+id: node.page_de_blog.status
+field_name: status
+entity_type: node
+bundle: page_de_blog
+label: Publié
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

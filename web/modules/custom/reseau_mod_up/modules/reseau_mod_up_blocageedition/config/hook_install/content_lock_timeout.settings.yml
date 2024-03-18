@@ -1,0 +1,3 @@
+langcode: fr
+content_lock_timeout_minutes: '60'
+content_lock_timeout_on_edit: 1

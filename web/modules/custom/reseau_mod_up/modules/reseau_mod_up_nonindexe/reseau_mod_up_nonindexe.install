@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for reseau_mod_up_nonindexe module.
+ */
+
+
+use Drupal\Component\Serialization\Yaml;
+
+/**
+ * Implements hook_install().
+ */
+
+function reseau_mod_up_nonindexe_install()
+{
+  module_set_weight('reseau_mod_up_nonindexe', 3);
+
+
+}
+

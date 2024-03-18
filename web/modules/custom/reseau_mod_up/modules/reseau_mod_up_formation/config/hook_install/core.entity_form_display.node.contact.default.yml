@@ -1,0 +1,71 @@
+uuid: 081a54aa-c9dd-4dce-813f-0d76d38660e1
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.contact.field_ctc_complement
+    - field.field.node.contact.field_ctc_email
+    - field.field.node.contact.field_ctc_fonction
+    - field.field.node.contact.field_ctc_ref_handicap
+    - field.field.node.contact.field_structure_associee
+    - node.type.contact
+  module:
+    - text
+id: node.contact.default
+targetEntityType: node
+bundle: contact
+mode: default
+content:
+  field_ctc_complement:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_ctc_email:
+    type: email_default
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
+  field_ctc_fonction:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_ctc_ref_handicap:
+    type: options_buttons
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_structure_associee:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  langcode: true
+  path: true
+  promote: true
+  status: true
+  sticky: true
+  uid: true
+  url_redirects: true

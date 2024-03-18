@@ -1,0 +1,114 @@
+{#
+/**
+ * @file
+ * Default theme implementation to each level of menu.
+ */
+#}
+{% import _self as menu %}
+
+{{ menu.menu_links(items, attributes, 0) }}
+
+{% macro menu_links(items, attributes, menu_level) %}
+
+
+	{% if menu_level is same as(0) %}
+		{% if items|first.content['#menu_link_content'].get('parent').value %}
+			{# <pre>{{ kint(items|first.content['#menu_link_content'].get('parent') ) }}</pre> #}
+			{% set subparent_id = 'sub-' ~ items|first.content['#menu_link_content'].get('parent').value|clean_class%}
+		{# {{ kint(menu_level ) }} #}
+			{# {{ kint('la' ) }} #}
+			{# {{ kint(aact ) }} #}
+
+		{% endif %}
+		{% set firstlevel = 'navbar-nav ' %}
+	{% endif %}
+	{# {{ kint(items|first.content['#menu_link_content'].get('parent').is_expanded ) }} #}
+	{# {{ kint(items|first.entity.parent) }} #}
+	{# {{ kint(items|first) }} #}
+
+	{# {{ items }} #}
+		{% set found = 0 %}
+		{% for item in items %}
+	
+{# {{ kint(item.in_active_trail) }} #}
+			{% if item.in_active_trail != FALSE %}
+
+			{# {{item.in_active_trail}} #}
+			{# {{ kint(item) }} #}
+		{% set found = 1 %}
+	{% endif %}
+
+	{% endfor %}
+	
+		<ul class="menu menu-level-{{ items|first.menu_level }}  {% if firstlevel is defined %} {{firstlevel}} {% endif %}  {% if subparent_id is defined %}collapse{% endif %} {% if found is same as(1) %} show {% endif %}" {% if subparent_id is defined %} id="{{subparent_id}}" {% endif %}> {% for key, item in items if key|first != '#' %}
+			{# {{ kint(item ) }} #}
+			{# {% if item.content['#menu_link_content'].get('parent').value %} #}
+			{# {{ kint(menu_link_content.get('parent').value) }} #}
+			{# {% set subparent_id = 'sub-' ~ item.content['#menu_link_content'].get('parent').value|clean_class %} #}
+			{# {% endif %} #}
+			{# menu_link_content:849ed2f2-e83d-4db4-aa69-21c46c329602 #}
+
+
+			{% set menu_item_classes = [
+      'menu-item',
+      'nav-item',
+      item.is_expanded ? 'menu-item--expanded',
+      item.is_collapsed ? 'menu-item--collapsed',
+      item.in_active_trail ? 'menu-item--active-trail',
+    ] %}
+			{# {% set link_item_classes = [
+						      'nav-link',
+						      item.in_active_trail ? 'active',
+						    ] %} #}
+
+
+			{% set sub_id = '#sub-menu-link-content' ~ item.content['#menu_link_content'].get('uuid').value %}
+
+				<li{{item.attributes.addClass(menu_item_classes)}}>
+
+
+				{# {{ kint(item.entity.field_menu_ft_icone.value ) }} #}
+				{# {{ kint(item ) }} #}
+					{% if item.entity.field_menu_ft_icone.value != null %}
+
+					{{ item.entity.field_menu_ft_icone.value|raw }}
+					{{ link(item.title, item.url,{ 'class':['nav-link']}) }}
+
+				{% else %}
+					{# {{ item.url['uri'] == '#' ~ sub_id }} #}
+					{# {{ link(item.title, item.url,{ 'data-bs-toggle':['collapse'],}) }} #}
+						{% if item.is_expanded == true %}
+						{# {{ link(item.title, item.url,{ 'data-bs-toggle':['collapse'],}) }} #}
+
+
+						{# {{ item.url.attributes.setAttribute('id', 'myID') }} #}
+
+
+							{% if item.url.RouteName is same as('<none>') %}
+								<a href={{ sub_id }} class="nav-link collapsed" data-bs-toggle="collapse"> {{item.title}}</a>
+
+
+						{% else %}
+							{{ link(item.title, item.url,{ 'class':['nav-link collapsed']}) }}
+
+						{% endif %}
+						{# {{ kint(item.content ) }} #}
+
+					{% else %}
+						{{ link(item.title, item.url,{ 'class':['nav-link']}) }}
+						{# {{ kint(item.url) }} #}
+					{% endif %}
+
+				{% endif %}
+
+				{% set rendered_content = item.content|without('') %}
+				{% if rendered_content|render %}
+					{# {{ kint(rendered_content ) }} #}
+					{# {{ rendered_content.attributes.setAttribute('id', 'myID') }} #}
+				{{ rendered_content }}
+			{% endif %}
+
+
+		</li>
+	{% endfor %}
+</ul>{% endmacro %}

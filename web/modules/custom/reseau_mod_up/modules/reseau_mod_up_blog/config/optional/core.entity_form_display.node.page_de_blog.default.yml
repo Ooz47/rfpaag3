@@ -1,0 +1,119 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.page_de_blog.body
+    - field.field.node.page_de_blog.field_act_structure_concernee
+    - field.field.node.page_de_blog.field_ecrit_par
+    - field.field.node.page_de_blog.field_image_principale
+    - field.field.node.page_de_blog.field_image_principale_legende
+    - field.field.node.page_de_blog.field_mots_cles_texte
+    - field.field.node.page_de_blog.field_structure_associee
+    - field.field.node.page_de_blog.field_texte_introduction
+    - field.field.node.page_de_blog.field_thematiques
+    - node.type.page_de_blog
+  module:
+    - media_library
+    - text
+id: node.page_de_blog.default
+targetEntityType: node
+bundle: page_de_blog
+mode: default
+content:
+  body:
+    type: text_textarea_with_summary
+    weight: 8
+    region: content
+    settings:
+      rows: 5
+      summary_rows: 2
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  created:
+    type: datetime_timestamp
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_act_structure_concernee:
+    type: options_buttons
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_ecrit_par:
+    type: string_textfield
+    weight: 4
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_image_principale:
+    type: media_library_widget
+    weight: 5
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
+  field_image_principale_legende:
+    type: string_textarea
+    weight: 6
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  field_mots_cles_texte:
+    type: entity_reference_autocomplete_tags
+    weight: 9
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_structure_associee:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_texte_introduction:
+    type: text_textarea
+    weight: 7
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings: {  }
+  field_thematiques:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 11
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  langcode: true
+  path: true
+  promote: true
+  sticky: true
+  uid: true
+  url_redirects: true

@@ -1,0 +1,6 @@
+modifier structure associee:
+  title: 'Modifier la structure associée au contenu'
+  description: 'Autorise la modification du champ structure associée pour les contenus actualités, évènements, page de base, formations'
+modifier medias structure associee:
+  title: 'Modifier uniquement les médias associés à sa structure'
+  description: 'Autorise la modification des médias de sa structure'

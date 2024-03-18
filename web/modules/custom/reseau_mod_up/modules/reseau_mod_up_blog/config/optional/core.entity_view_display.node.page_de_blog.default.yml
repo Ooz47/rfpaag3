@@ -1,0 +1,146 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.page_de_blog.body
+    - field.field.node.page_de_blog.field_act_structure_concernee
+    - field.field.node.page_de_blog.field_ecrit_par
+    - field.field.node.page_de_blog.field_image_principale
+    - field.field.node.page_de_blog.field_image_principale_legende
+    - field.field.node.page_de_blog.field_mots_cles_texte
+    - field.field.node.page_de_blog.field_structure_associee
+    - field.field.node.page_de_blog.field_texte_introduction
+    - field.field.node.page_de_blog.field_thematiques
+    - image.style.wide
+    - node.type.page_de_blog
+  module:
+    - blazy
+    - field_formatter_class
+    - text
+    - user
+id: node.page_de_blog.default
+targetEntityType: node
+bundle: page_de_blog
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_ecrit_par:
+    type: string
+    label: visually_hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      field_formatter_class:
+        class: ecritPar
+    weight: 3
+    region: content
+  field_image_principale:
+    type: blazy_media
+    label: visually_hidden
+    settings:
+      caption:
+        field_media_mots_cles: '0'
+        field_media_structure_associee: '0'
+        title: '0'
+        alt: '0'
+      class: ''
+      id: ''
+      image: ''
+      link: ''
+      overlay: ''
+      title: ''
+      vanilla: false
+      layout: ''
+      view_mode: default
+      cache: 0
+      current_view_mode: default
+      skin: ''
+      fx: ''
+      lazy: ''
+      loading: ''
+      preload: false
+      style: ''
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      responsive_image_style: ''
+      box_style: wide
+      image_style: wide
+      media_switch: colorbox
+      ratio: ''
+      thumbnail_style: ''
+      _item: ''
+      _uri: ''
+      grid_header: ''
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 4
+    region: content
+  field_image_principale_legende:
+    type: basic_string
+    label: visually_hidden
+    settings: {  }
+    third_party_settings:
+      field_formatter_class:
+        class: image_principale_legende
+    weight: 5
+    region: content
+  field_mots_cles_texte:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: mots-cles-texte
+    weight: 7
+    region: content
+  field_structure_associee:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: structure
+    weight: 1
+    region: content
+  field_texte_introduction:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      field_formatter_class:
+        class: texte_introduction
+    weight: 0
+    region: content
+  field_thematiques:
+    type: entity_reference_label
+    label: visually_hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: thematiques
+    weight: 2
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: content
+hidden:
+  field_act_structure_concernee: true
+  langcode: true
+  search_api_excerpt: true

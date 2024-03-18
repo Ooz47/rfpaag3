@@ -1,0 +1,22 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_act_acc_structure
+    - node.type.evenement
+id: node.evenement.field_act_acc_structure
+field_name: field_act_acc_structure
+entity_type: node
+bundle: evenement
+label: 'Afficher sur la page d''accueil de la structure ?'
+description: ''
+required: true
+translatable: true
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: Oui
+  off_label: Non
+field_type: boolean

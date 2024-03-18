@@ -1,0 +1,34 @@
+.entity-access-password-password #edit-submit {
+    margin: 10px auto;
+    width: auto;
+    background: #009e99;
+    color: #fff;
+    border: 0px solid #ced4da;
+}
+
+.entity-access-password-password .form-item-form-password {
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width:60%;
+    margin: auto;
+}
+
+#block-reseau-page-title h1 {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+}
+
+#block-reseau-page-title h1 i {
+    font-style: normal;
+    font-size: 1.2rem;
+    color: #009e99;
+}
+
+#block-reseau-page-title h1 i.fa-unlock::before {
+    /* content: "\f09c"; */
+    content: "\f3c1";
+}

@@ -1,0 +1,3 @@
+reseau_mod_up_revision:
+  dependencies:
+    - core/drupal

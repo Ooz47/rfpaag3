@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * Contains reseau_mod_up_formation.module.
+ */
+
+
+/**
+ * Implements hook_entity_type_alter().
+ *
+ * @param array $entity_types
+ */
+function reseau_mod_up_formation_entity_type_alter(array &$entity_types)
+{
+  // Add validation constraint to the node entity
+  if (isset($entity_types['node'])) {
+    $entity_types['node']->addConstraint('AtLeastOneFormationIdentifier');
+
+    // dsm($entity_types['node']);
+  }
+}
+
+
+function reseau_mod_up_formation_page_attachments_alter(array &$attachments)
+{
+
+  /*ajoute css admin*/
+  $admin_theme = \Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = \Drupal::service('theme_handler')->getName($admin_theme);
+  if ($admin_theme_name == 'Seven') {
+    $attachments['#attached']['library'][] = 'reseau_mod_up_formation/extra.admin';
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function reseau_mod_up_formation_theme()
+{
+
+  $theme['node__contact__handicap'] = [
+    'base hook' => 'node',
+  ];
+
+
+  return $theme;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+
+function reseau_mod_up_formation_theme_suggestions_node(array $variables)
+{
+  $node = $variables['elements']['#node'];
+  $suggestions = [];
+  if ((doesBundleHaveField($node->getEntityTypeId(), $node->bundle(), 'field_ctc_ref_handicap')) && (!empty($node->get('field_ctc_ref_handicap')->getValue()))) {
+    $contactHandicap = $node->get('field_ctc_ref_handicap')->getValue();
+    if ($contactHandicap[0]['value'] == TRUE) {
+      $suggestions[] = 'node__contact__handicap';
+    }
+  }
+
+
+  return $suggestions;
+}

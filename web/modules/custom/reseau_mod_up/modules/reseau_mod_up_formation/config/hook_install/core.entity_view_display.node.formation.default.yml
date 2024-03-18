@@ -1,0 +1,618 @@
+uuid: 06ee3faf-f691-4f39-b8d0-a29711fc0107
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.formation.body
+    - field.field.node.formation.field_accessibilite
+    - field.field.node.formation.field_certif_visee_libelle
+    - field.field.node.formation.field_certification_visee
+    - field.field.node.formation.field_code_cpf
+    - field.field.node.formation.field_contenus_de_la_formation
+    - field.field.node.formation.field_dates_previsionnelle
+    - field.field.node.formation.field_debouche
+    - field.field.node.formation.field_domaine_activite
+    - field.field.node.formation.field_duree_de_la_formation
+    - field.field.node.formation.field_fiche_formation_pdf
+    - field.field.node.formation.field_financement
+    - field.field.node.formation.field_financement_complement
+    - field.field.node.formation.field_fmt_candidature
+    - field.field.node.formation.field_fmt_cgv
+    - field.field.node.formation.field_fmt_code_diplome
+    - field.field.node.formation.field_fmt_code_rncp
+    - field.field.node.formation.field_fmt_contacts
+    - field.field.node.formation.field_fmt_grand_champ
+    - field.field.node.formation.field_fmt_information
+    - field.field.node.formation.field_fmt_pole_greta_gp
+    - field.field.node.formation.field_fmt_type_accompagnement
+    - field.field.node.formation.field_formacode
+    - field.field.node.formation.field_heures_en_centre
+    - field.field.node.formation.field_heures_en_entreprise
+    - field.field.node.formation.field_lieux
+    - field.field.node.formation.field_modalites_admission
+    - field.field.node.formation.field_modalites_admission_comp
+    - field.field.node.formation.field_modalites_de_formation
+    - field.field.node.formation.field_modalites_eval_complement
+    - field.field.node.formation.field_modalites_evaluation
+    - field.field.node.formation.field_modalites_fmt_complement
+    - field.field.node.formation.field_moyens_pedagogiques
+    - field.field.node.formation.field_niveau_de_sortie
+    - field.field.node.formation.field_nombre_de_participants
+    - field.field.node.formation.field_pre_requis
+    - field.field.node.formation.field_pre_requis_complement
+    - field.field.node.formation.field_public_cible
+    - field.field.node.formation.field_public_cible_complement
+    - field.field.node.formation.field_restauration
+    - field.field.node.formation.field_resultats_formation
+    - field.field.node.formation.field_structure_associee
+    - field.field.node.formation.field_tarif
+    - field.field.node.formation.field_transport
+    - field.field.node.formation.field_vignettes_formation
+    - node.type.formation
+  module:
+    - cshs
+    - entity_reference_revisions
+    - field_formatter_class
+    - field_group
+    - text
+    - user
+third_party_settings:
+  field_group:
+    group_row:
+      children:
+        - group_colonne_1
+        - group_colonne_2
+        - group_colonne_3
+      label: Row
+      parent_name: ''
+      region: content
+      weight: 0
+      format_type: html_element
+      format_settings:
+        classes: 'row row-entete'
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_colonne_1:
+      children:
+        - field_code_cpf
+        - field_formacode
+        - field_fmt_code_diplome
+        - field_fmt_code_rncp
+        - field_fmt_grand_champ
+      label: 'Colonne 1'
+      parent_name: group_row
+      region: content
+      weight: 20
+      format_type: html_element
+      format_settings:
+        classes: 'order-4 col-sm-5 order-sm-1 col-md-2'
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_colonne_2:
+      children:
+        - field_domaine_activite
+        - field_dates_previsionnelle
+      label: 'Colonne 2'
+      parent_name: group_row
+      region: content
+      weight: 21
+      format_type: html_element
+      format_settings:
+        classes: 'order-3 mb-3 mb-sm-0 col-sm-7 order-sm-2 col-md-4'
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_onglets:
+      children:
+        - group_description
+        - group_contenus_modalites
+        - group_information_financiere
+        - group_lieu_et_accessibilite
+        - group_resultats
+      label: Onglets
+      parent_name: ''
+      region: content
+      weight: 2
+      format_type: tabs
+      format_settings:
+        classes: ''
+        id: ''
+        direction: horizontal
+    group_description:
+      children:
+        - body
+        - field_debouche
+        - field_pre_requis
+        - field_pre_requis_complement
+        - field_public_cible_complement
+        - field_nombre_de_participants
+      label: Description
+      parent_name: group_onglets
+      region: content
+      weight: 20
+      format_type: tab
+      format_settings:
+        classes: ''
+        id: ''
+        formatter: closed
+        description: ''
+    group_contenus_modalites:
+      children:
+        - field_contenus_de_la_formation
+        - field_fmt_modalites_delais
+        - field_modalites_admission
+        - field_modalites_admission_comp
+        - field_modalites_de_formation
+        - field_modalites_fmt_complement
+        - field_modalites_evaluation
+        - field_modalites_eval_complement
+        - field_moyens_pedagogiques
+        - field_niveau_de_sortie
+        - field_certif_visee_libelle
+      label: Contenus-Modalités
+      parent_name: group_onglets
+      region: content
+      weight: 21
+      format_type: tab
+      format_settings:
+        classes: ''
+        id: ''
+        formatter: closed
+        description: ''
+    group_information_financiere:
+      children:
+        - field_duree_de_la_formation
+        - field_heures_en_centre
+        - field_heures_en_entreprise
+        - field_tarif
+        - field_financement
+        - field_financement_complement
+      label: 'Information financière et durée'
+      parent_name: group_onglets
+      region: content
+      weight: 22
+      format_type: tab
+      format_settings:
+        classes: ''
+        id: ''
+        formatter: closed
+        description: ''
+    group_lieu_et_accessibilite:
+      children:
+        - field_accessibilite
+        - field_transport
+        - field_restauration
+        - field_lieux
+      label: 'Lieu(x) et accessibilité'
+      parent_name: group_onglets
+      region: content
+      weight: 23
+      format_type: tab
+      format_settings:
+        classes: ''
+        id: ''
+        formatter: closed
+        description: ''
+    group_colonne_3:
+      children:
+        - field_fmt_contacts
+      label: 'Colonne 3'
+      parent_name: group_row
+      region: content
+      weight: 22
+      format_type: html_element
+      format_settings:
+        classes: 'order-2 mb-3 mb-sm-0 col-sm-6 order-sm-3 col-md-3 col-contacts'
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_resultats:
+      children:
+        - field_resultats_formation
+      label: Résultats
+      parent_name: group_onglets
+      region: content
+      weight: 24
+      format_type: tab
+      format_settings:
+        classes: ''
+        id: ''
+        formatter: closed
+        description: ''
+    group_row_vignettes:
+      children:
+        - field_vignettes_formation
+      label: 'row vignettes'
+      parent_name: ''
+      region: content
+      weight: 6
+      format_type: html_element
+      format_settings:
+        classes: row
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+id: node.formation.default
+targetEntityType: node
+bundle: formation
+mode: default
+content:
+  body:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_accessibilite:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_certif_visee_libelle:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_code_cpf:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_contenus_de_la_formation:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_dates_previsionnelle:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 26
+    region: content
+  field_debouche:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_domaine_activite:
+    type: cshs_full_hierarchy
+    label: above
+    settings:
+      linked: 0
+      reverse: 0
+      separator: ' » '
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 25
+    region: content
+  field_duree_de_la_formation:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_fiche_formation_pdf:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_financement:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 9
+    region: content
+  field_financement_complement:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_fmt_candidature:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_fmt_cgv:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_fmt_code_diplome:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_fmt_code_rncp:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_fmt_contacts:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 8
+    region: content
+  field_fmt_grand_champ:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: 'badge text-wrap'
+    weight: 11
+    region: content
+  field_fmt_information:
+    type: text_default
+    label: visually_hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_fmt_modalites_delais:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_formacode:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_heures_en_centre:
+    type: text_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_heures_en_entreprise:
+    type: text_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_lieux:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 14
+    region: content
+  field_modalites_admission:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 6
+    region: content
+  field_modalites_admission_comp:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_modalites_de_formation:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 8
+    region: content
+  field_modalites_eval_complement:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_modalites_evaluation:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 10
+    region: content
+  field_modalites_fmt_complement:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_moyens_pedagogiques:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_niveau_de_sortie:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 13
+    region: content
+  field_nombre_de_participants:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 11
+    region: content
+  field_pre_requis:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: ''
+    weight: 8
+    region: content
+  field_pre_requis_complement:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_public_cible_complement:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  field_restauration:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 13
+    region: content
+  field_resultats_formation:
+    type: entity_reference_revisions_entity_view
+    label: visually_hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_tarif:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_transport:
+    type: text_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 12
+    region: content
+  field_vignettes_formation:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings:
+      field_formatter_class:
+        class: vignettes_formation
+    weight: 4
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 7
+    region: content
+hidden:
+  field_certification_visee: true
+  field_fmt_pole_greta_gp: true
+  field_fmt_type_accompagnement: true
+  field_public_cible: true
+  field_structure_associee: true
+  langcode: true
+  search_api_excerpt: true

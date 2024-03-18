@@ -1,0 +1,29 @@
+<?php
+
+/**
+ * @file
+ * Contains install and update functions for menu_admin_per_menu module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+// function reseau_mod_up_formation_install() {
+//   // Set module weight bigger than menu_ui module.
+//   module_set_weight('reseau_mod_up_formation', 3);
+// }
+
+
+use Drupal\Component\Serialization\Yaml;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_install().
+ */
+
+function reseau_mod_up_revision_install()
+{
+  module_set_weight('reseau_mod_up_revision', 3);
+  
+  
+}

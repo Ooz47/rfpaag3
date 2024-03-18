@@ -1,0 +1,28 @@
+extra.admin:
+  css:
+    theme:
+      css/admin.css: {}
+
+reseau_mod:
+  js:
+    js/webmasterreseau.js: {}
+  css:
+    theme:
+      css/webmaster.css: {}
+  dependencies:
+    - core/drupal
+
+recherche:
+  js:
+    js/recherche.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+
+searchfaq:
+  js:
+    js/searchfaq.js: {}
+
+autocomplete:
+  js:
+    js/autocomplete.js: {}

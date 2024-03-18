@@ -1,0 +1,7 @@
+langcode: fr
+status: true
+dependencies: {  }
+name: 'Mots clés texte'
+vid: mots_cles_texte
+description: ''
+weight: 0

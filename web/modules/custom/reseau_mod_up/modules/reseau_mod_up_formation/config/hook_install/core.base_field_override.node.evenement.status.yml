@@ -1,0 +1,22 @@
+uuid: 180d3a39-ac1d-45eb-b3cd-562420f91e91
+langcode: fr
+status: true
+dependencies:
+  config:
+    - node.type.evenement
+id: node.evenement.status
+field_name: status
+entity_type: node
+bundle: evenement
+label: Publié
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

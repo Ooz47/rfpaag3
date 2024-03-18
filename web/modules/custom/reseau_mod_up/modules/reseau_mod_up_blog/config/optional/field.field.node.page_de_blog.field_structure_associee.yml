@@ -1,0 +1,28 @@
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_structure_associee
+    - node.type.page_de_blog
+    - taxonomy.vocabulary.structure_associee
+id: node.page_de_blog.field_structure_associee
+field_name: field_structure_associee
+entity_type: node
+bundle: page_de_blog
+label: 'Structure associée'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      structure_associee: structure_associee
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

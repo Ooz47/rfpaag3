@@ -1,0 +1,15 @@
+extra.admin:
+  js:
+    js/formation.js: {}
+  css:
+    theme:
+      css/admin.css: {}
+
+extra.display:
+  css:
+    theme:
+      css/contact-handicap.css: {}
+
+reseau_mod_up_formation:
+  dependencies:
+    - core/drupal

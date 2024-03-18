@@ -1,0 +1,33 @@
+name: reseau
+type: theme
+description: 'reseau'
+core_version_requirement: ^9
+base theme: stable9
+# logo: images/logo-Presses-Universitaires-Antilles.jpg
+libraries:
+  - reseau/global-styling
+  - reseau/fonts
+  - reseau/tarteaucitron
+
+ckeditor_stylesheets:
+  - css/cke_editor.css  
+
+regions:
+  header: 'Header'
+  menuoff: 'Menu principal'
+  recherche: 'Recherche formation'
+  banniere: 'Bannière'
+  breadcrumb: Breadcrumb
+  highlighted: Highlighted
+  help: Help
+  sidebar_first: 'First sidebar'
+  content: Content
+  sidebar_second: 'Second sidebar'
+  profil: Profil
+  quisommesnous: Qui sommes nous?
+  actualitesagenda: Actualités et Agenda
+  blogconteneur: Blog
+  temoignagesconteneur: Témoignages
+  resultats: Résultats
+  basdepage: Bas de page
+  footer: Footer

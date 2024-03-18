@@ -1,0 +1,51 @@
+uuid: 520a6000-c77f-4e93-9408-e8f2c663894b
+langcode: fr
+status: true
+dependencies:
+  config:
+    - field.field.node.page.body
+    - field.field.node.page.field_contenu_indexation
+    - field.field.node.page.field_p_sidebar
+    - field.field.node.page.field_password
+    - field.field.node.page.field_pb_p_paragraphes
+    - field.field.node.page.field_structure_associee
+    - node.type.page
+  module:
+    - entity_reference_revisions
+    - text
+    - user
+_core:
+  default_config_hash: g1S3_GLaxq4l3I9RIca5Mlz02MxI2KmOquZpHw59akM
+id: node.page.default
+targetEntityType: node
+bundle: page
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_pb_p_paragraphes:
+    type: entity_reference_revisions_entity_view
+    label: visually_hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  field_contenu_non_indexe: true
+  field_p_sidebar: true
+  field_password: true
+  field_structure_associee: true
+  langcode: true
+  search_api_excerpt: true
