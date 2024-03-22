@@ -1,0 +1,15 @@
+.form-radio.form-control {
+
+    appearance: auto;
+    width: auto;
+    display: inline-block;
+}
+
+.webform-options-display-side-by-side > div {
+
+    margin: 0.5rem 1.5rem 0 0;
+}
+
+.form-date {
+    margin-top: 0.25rem;
+}

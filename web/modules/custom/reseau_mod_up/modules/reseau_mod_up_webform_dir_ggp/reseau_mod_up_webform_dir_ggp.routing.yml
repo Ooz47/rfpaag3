@@ -1,0 +1,121 @@
+reseau_mod_up_webform.webform_submission_marquertraiteformation:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteFormation'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteFormation'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquertraiteattente:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteAttente'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteAttente'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquertraiteoriente:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteOriente'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteOriente'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquertraite:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraite'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraite'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquertraiteselectionreglementaire:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteSelectionReglementaire'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteSelectionReglementaire'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+
+reseau_mod_up_webform.webform_submission_marquertraiteconvocationinfocoll:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteConvocationInfocoll'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteConvocationInfocoll'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquertraiteentretien:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteEntretien'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteEntretien'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquertraiteautredemande:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerTraiteAutreDemande'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerTraiteAutreDemande'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquerencourstransmisentretien:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerEncoursTransmisEntretien'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerEncoursTransmisEntretien'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquerencourstransmisinfocol:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerEncoursTransmisInfocol'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerEncoursTransmisInfocol'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'
+
+reseau_mod_up_webform.webform_submission_marquerencours:
+  path: '/admin/reseau_mod_up_webform/submission/{submission}/marquerEncours'
+  defaults:
+    _controller: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::marquerEncours'
+  options:
+    parameters:
+      submission:
+        type: 'entity:webform_submission'
+  requirements:
+    _custom_access: '\Drupal\reseau_mod_up_webform\Controller\WebformSubmissionChangerStatutController::access'

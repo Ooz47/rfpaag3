@@ -107,11 +107,12 @@ function reseau_mod_up_webform_webform_submission_form_alter(array &$form, FormS
     /**/
     //Si sur form modification submission
 
-    if ($form_state->getFormObject()->getOperation() == 'edit' && !$form_state->getFormObject()->getEntity()->isNew()) {
 
-      $form['elements']['captcha']['#access'] = FALSE;
-      // dsm($form);
-    }
+  }
+
+  //On retire le captcha sur les page edit quelque soit le formulaire
+  if ($form_state->getFormObject()->getOperation() == 'edit' && !$form_state->getFormObject()->getEntity()->isNew()) {
+    $form['elements']['captcha']['#access'] = FALSE;
   }
 }
 
