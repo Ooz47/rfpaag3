@@ -1383,6 +1383,54 @@ body.recherche .contenuprincipal .views-element-container {
 
 }
 
+ main .contenuprincipal {
+  .views-element-container {
+  nav {
+  ul.js-pager__items {
+    display: flex;
+    justify-content: space-between;
+    li {
+      &::before {
+      display: none;
+      }
+    }
+  }
+  }
+}
+}
+
+
+
+#views-exposed-form-recherche-page-1
+{
+  #edit-field-structure-associee-collapsible, #edit-type-collapsible {
+display: none;
+}
+}
+
+.layout-sidebar-first   #block-formulaireexposerecherchepage-1-2 {
+  padding-right: 1rem !important;
+padding-left: 1rem !important;
+}
+
+
+body.recherche .layout-sidebar-first .views-exposed-form #views-exposed-form-recherche-page-1  {
+  flex-direction: column;
+  align-items: stretch;
+  details.form-wrapper{ 
+  margin: .5rem 0;
+}
+.form-item-recherche-formations {
+  padding-bottom: 0.5rem;
+}
+#edit-field-structure-associee-collapsible, #edit-type-collapsible{
+  display: block;
+}
+.form-actions {
+  display: none;
+}
+}
+
 /*FFin moteur de recheche*/
 
 /*FIN HEADER*/
