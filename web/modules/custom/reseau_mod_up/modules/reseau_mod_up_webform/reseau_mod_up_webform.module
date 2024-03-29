@@ -110,6 +110,72 @@ function reseau_mod_up_webform_webform_submission_form_alter(array &$form, FormS
 
   }
 
+  // if ($webform_id == 'contact_greta_cfa_sxmsbh') {
+
+  //   dsm($formations['#selection_settings']);
+
+  //    $formations = $form['elements']['formations'] ?? [];
+
+  //   if (!$formations || empty($formations['#selection_settings']['view'])) {
+  //     return;
+  //   }
+
+  //   // Settings ajax related properties.
+  //   $formations_wrapper_id = $formations['#webform_id'] . '--wrapper';
+  //   $secteurs['#ajax'] = [
+  //     'callback' => 'reseau_mod_up_webform_webform_submission_form_secteurs_ajax_callback',
+  //     'wrapper' => $formations_wrapper_id,
+  //   ];
+  //   $formations['#prefix'] = '<div id="' . $formations_wrapper_id . '">';
+  //   $formations['#suffix'] = '</div>';
+
+  //   $formation_post = Xss::filter(\Drupal::request()->get('formations'));
+  //   $secteur_post = Xss::filter(\Drupal::request()->get('secteurs'));
+
+  //   if ($secteur_post) {
+  //     $selected_secteur = $secteur_post;
+
+   
+  //     $formations['#default_value'] = $formation_post;
+
+  //     $formation_get = Xss::filter(\Drupal::request()->query->get('formations'));
+  //   $secteur_get = Xss::filter(\Drupal::request()->query->get('secteurs'));
+  //   if ($secteur_get) {
+  //     $secteurs['#attributes'] = array('disabled' => 'disabled');
+  //   }
+  //   if ($formation_get) {
+  //     $formations['#attributes'] = array('disabled' => 'disabled');
+  //   }
+  
+   
+  //   } else {
+
+
+  //     // Attempting to retrieve possible selected organization.
+  //     if (!($selected_secteur = $form_state->getValue('secteurs'))) {
+  //       // dsm($selected_secteur);
+  //       $selected_secteur = $secteurs['#default_value'] ?? 0;
+  //     }
+  //   }
+  //   // Apply the selected organization if a selected one was found.
+  //   if ($selected_secteur) {
+  //     // dsm($selected_secteur);
+  //     $formations['#selection_settings']['view']['arguments'] = [1, $selected_secteur];
+
+  //     $formations['#options'] = [];
+  //     $form_object = $form_state->getFormObject();
+  //     $settings = ['webform_submission' => $form_object->getEntity()];
+  //     WebformEntitySelect::setOptions($formations, $settings);
+
+  //     $formations['#options']['autre'] = 'Autre...';
+
+  //   }
+
+  //   $form['elements']['secteurs'] = $secteurs;
+  //   $form['elements']['formations'] = $formations;
+
+  // }
+
   //On retire le captcha sur les page edit quelque soit le formulaire
   if ($form_state->getFormObject()->getOperation() == 'edit' && !$form_state->getFormObject()->getEntity()->isNew()) {
     $form['elements']['captcha']['#access'] = FALSE;
@@ -182,6 +248,15 @@ function reseau_mod_up_webform_theme()
   $theme['webform_submission_form__contact_cfapag'] = [
     'base hook' => 'node',
   ];
+
+  $theme['webform_submission__contact_greta_cfa_sxmsbh'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__contact_greta_cfa_sxmsbh'] = [
+    'base hook' => 'node',
+  ];
+
 
   $theme['field__node__cfapag_field_fmt_candidature'] = [
     'base hook' => 'field',
@@ -260,7 +335,10 @@ function reseau_mod_up_webform_entity_operation_alter(array &$operations, \Drupa
   // }
 
   if ($entity->getEntityTypeId() == 'webform_submission') {
-    if (($entity->get('webform_id')->entity->get('id') == 'contact_greta_cfa_de_la_guadelou') || ($entity->get('webform_id')->entity->get('id') == 'contact_cfapag') ) {
+    if (($entity->get('webform_id')->entity->get('id') == 'contact_greta_cfa_de_la_guadelou') 
+    || ($entity->get('webform_id')->entity->get('id') == 'contact_cfapag') 
+    || ($entity->get('webform_id')->entity->get('id') == 'contact_greta_cfa_sxmsbh') 
+  ) {
 
       if (isset($operations['resend'])) {
         unset($operations['resend']);
@@ -441,8 +519,58 @@ function reseau_mod_up_webform_entity_operation(EntityInterface $submission)
           ]),
         ];
       }
-
     }
+
+/* POUR FORMULAIRE CONTACT GRETA SXMSBH */
+if ($submission->get('webform_id')->entity->get('id') == 'contact_greta_cfa_sxmsbh') {
+    if ($submission->getElementData('statut') !== 'Traité-formation') {
+
+    $operations['traiteformation'] = [
+      'title' => t('Marquer comme Traité : Entré.e en formation'),
+      'weight' => 15,
+      'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteformation', [
+        'submission' => $submission->id(),
+      ], [
+        'query' => \Drupal::destination()->getAsArray(),
+      ]),
+    ];
+  }
+  if ($submission->getElementData('statut') !== 'Traité-orienté') {
+
+    $operations['traiteoriente'] = [
+      'title' => t('Marquer comme Traité : Orienté.e vers une autre structure'),
+      'weight' => 15,
+      'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteoriente', [
+        'submission' => $submission->id(),
+      ], [
+        'query' => \Drupal::destination()->getAsArray(),
+      ]),
+    ];
+  }
+  if ($submission->getElementData('statut') !== 'Traité-autre') {
+
+    $operations['traiteautre'] = [
+      'title' => t('Marquer comme Traité : Autre demande'),
+      'weight' => 15,
+      'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraiteautredemande', [
+        'submission' => $submission->id(),
+      ], [
+        'query' => \Drupal::destination()->getAsArray(),
+      ]),
+    ];
+  }
+  if ($submission->getElementData('statut') !== 'En cours') {
+    $operations['encours'] = [
+      'title' => t('Marquer comme: En cours de traitement'),
+      'weight' => 15,
+      'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquerencours', [
+        'submission' => $submission->id(),
+      ], [
+        'query' => \Drupal::destination()->getAsArray(),
+      ]),
+    ];
+  }
+}
   }
 
   return $operations;

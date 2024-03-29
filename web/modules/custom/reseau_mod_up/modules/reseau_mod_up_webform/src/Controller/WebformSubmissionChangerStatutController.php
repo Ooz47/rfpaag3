@@ -218,6 +218,6 @@ class WebformSubmissionChangerStatutController extends ControllerBase
    */
   public function access(WebformSubmission $submission)
   {
-    return AccessResult::allowedIf(!$submission->isDraft() && array_intersect(array('administrator', 'webmaster_cfapag', 'gestionnaire_formulaire_greta_guadeloupe', 'webmaster_reseau'), $this->currentUser()->getRoles()) !== []);
+    return AccessResult::allowedIf(!$submission->isDraft() && array_intersect(array('administrator', 'webmaster_cfapag', 'gestionnaire_formulaire_greta_guadeloupe','webmaster_greta_sxmsbh', 'webmaster_reseau'), $this->currentUser()->getRoles()) !== []);
   }
 }
