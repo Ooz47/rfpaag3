@@ -86,7 +86,7 @@
     set string_link = 'greta-guadeloupe'
   %}
   {%
-      set custom_link =  url('<front>')| render ~ string_link ~'/contactez-nous?formations='~  element['#object'].get('nid').value ~ '&secteurs=' ~ element['#object'].get('field_fmt_pole_greta_gp').value['0']['target_id'] ~ '#block-formulairedecontactgretaguadeloupe'
+      set custom_link =  url('<front>')| render ~ string_link ~'/contactez-nous/contact?formations='~  element['#object'].get('nid').value ~ '&secteurs=' ~ element['#object'].get('field_fmt_pole_greta_gp').value['0']['target_id']
   %}
 {# {% else %}
    {%

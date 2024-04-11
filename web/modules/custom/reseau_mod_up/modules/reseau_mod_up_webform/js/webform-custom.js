@@ -22,24 +22,7 @@ $(context).find(inputFormation).once("inputFormation").each(function () {
     }
     );
 
-console.log($( "#edit_formations_chosen" ));
-  });
-
-
-  var inputQuartier =  $( 'select[id="edit-quartier-de-residence"]' );
-
-  console.log(inputQuartier);
-$(context).find(inputQuartier).once("inputQuartier").each(function () {
-    
-
-
-    // $('select[id="edit-quartier-de-residence"]').change(function(){
-      // console.log(this);
-      inputQuartier.chosen("destroy");
-  // }
-  //   );
-
- 
+// console.log($( "#edit_formations_chosen" ));
   });
 
 

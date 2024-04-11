@@ -1,0 +1,393 @@
+solution_apportee:
+  '#type': textarea
+  '#title': 'solution apportée'
+  '#access_create_roles': {  }
+  '#access_update_roles':
+    - authenticated
+statut:
+  '#type': select
+  '#title': Statut
+  '#options':
+    'A traiter': 'A traiter'
+    'En cours': 'En cours'
+    Encours-inscription-infocol: 'En cours : Inscription en infocol'
+    Encours-entretien: 'En cours : Transmis pour entretien'
+    Traité-formation: 'Traité : Entré.e en formation'
+    Traité-attente: 'Traité : En attente d’intégrer une formation'
+    Traité-orienté: 'Traité : Orienté.e vers une autre structure'
+    Traité-sélection-règlementaire: 'Traité : Sélection réglementaire'
+    Traité-convocation-infocoll: 'Traité : Convocation à une infocoll'
+    Traité-entretien: 'Traité : Entretien'
+    Traité-autre: 'Traité : Autre demande'
+  '#default_value': 'A traiter'
+  '#access_create_roles': {  }
+traite_le:
+  '#type': datetime
+  '#title': 'Traité le'
+  '#states':
+    visible-slide:
+      - ':input[name="statut"]':
+          value: Traité-formation
+      - xor
+      - ':input[name="statut"]':
+          value: Traité-attente
+      - xor
+      - ':input[name="statut"]':
+          value: Traité-orienté
+  '#access_create_roles':
+    - administrator
+    - gestionnaire_formulaire_greta_guadeloupe
+  '#date_date_format': ''
+  '#date_year_range': '2015:2050'
+  '#date_time_format': ''
+  '#date_time_step': '60'
+objet_select:
+  '#type': select_other
+  '#title': Objet
+  '#options':
+    'S''inscrire en apprentissage': 'S''inscrire en apprentissage'
+    'S''inscrire en formation': 'S''inscrire en formation'
+    'S''inscrire en VAE': 'S''inscrire en VAE'
+  '#other__placeholder': 'Précisez l''objet'
+  '#required': true
+  '#wrapper_type': form_element
+nom:
+  '#type': name
+  '#title': Nom
+  '#required': true
+  '#title__access': false
+  '#first__title': Prénom
+  '#first__required': true
+  '#middle__access': false
+  '#last__title': Nom
+  '#last__required': true
+  '#suffix__access': false
+  '#degree__access': false
+flexbox:
+  '#type': flexbox
+  '#align_items': center
+  telephone:
+    '#type': telephone
+    '#title': Téléphone
+    '#title_display': invisible
+    '#required': true
+    '#type__access': false
+    '#phone__title_display': inline
+    '#phone__required': true
+    '#ext__access': false
+    '#phone__international': false
+  email:
+    '#type': email
+    '#title': Email
+    '#required': true
+    '#required_error': 'Le champ email est requis'
+statut_demandeur:
+  '#type': select_other
+  '#title': 'Statut demandeur'
+  '#options':
+    Formateur: Formateur
+    Apprenant: Apprenant
+    'Agent GRETA': 'Agent GRETA'
+    'Personnels de l''établissement d''accueil de formation': 'Personnels de l''établissement d''accueil de formation'
+  '#other__placeholder': 'Précisez votre statut…'
+commune_de_residence:
+  '#type': select_other
+  '#title': 'Commune de résidence'
+  '#options':
+    Anse-Bertrand: Anse-Bertrand
+    Baie-Mahault: Baie-Mahault
+    Baillif: Baillif
+    Basse-Terre: Basse-Terre
+    Bouillante: Bouillante
+    Capesterre-Belle-Eau: Capesterre-Belle-Eau
+    Capesterre-de-Marie-Galante: Capesterre-de-Marie-Galante
+    Deshaies: Deshaies
+    Gourbeyre: Gourbeyre
+    Goyave: Goyave
+    Grand-Bourg: Grand-Bourg
+    'La Désirade': 'La Désirade'
+    Lamentin: Lamentin
+    'Le Gosier': 'Le Gosier'
+    'Le Moule': 'Le Moule'
+    'Les Abymes': 'Les Abymes'
+    'Morne-à-l''Eau': 'Morne-à-l''Eau'
+    Petit-Bourg: Petit-Bourg
+    Petit-Canal: Petit-Canal
+    Pointe-à-Pitre: Pointe-à-Pitre
+    Pointe-Noire: Pointe-Noire
+    Port-Louis: Port-Louis
+    Saint-Claude: Saint-Claude
+    Sainte-Anne: Sainte-Anne
+    Sainte-Rose: Sainte-Rose
+    Saint-François: Saint-François
+    Saint-Louis: Saint-Louis
+    Terre-de-Bas: Terre-de-Bas
+    Terre-de-Haut: Terre-de-Haut
+    Trois-Rivières: Trois-Rivières
+    Vieux-Fort: Vieux-Fort
+    Vieux-Habitants: Vieux-Habitants
+  '#other__placeholder': 'Précisez votre commune'
+  '#required': true
+  '#wrapper_type': form_element
+captcha:
+  '#type': captcha
+  '#captcha_type': recaptcha/reCAPTCHA
+nature_du_dysfonctionnement:
+  '#type': select
+  '#title': 'Nature du dysfonctionnement'
+  '#options':
+    prob_informatique: 'Problèmes informatiques'
+    prob_non_informatique: 'Problèmes matériels non informatiques et problème logistiques'
+    prob_incident_pers_form: 'Incidents de personnes sur une action de formation'
+    prob_incidents_pers_non_form: 'Incident relatif à des agents GRETA ou autres personnes non liées à une formation'
+  '#required': true
+pole_concerne:
+  '#type': select
+  '#title': 'Pôle concerné'
+  '#options':
+    pole_hrt: 'Pôle HRT'
+    pole_fg: 'Pôle Formation générale'
+    pole_ssap: 'Pôle SSAP'
+    pole_in: 'Pôle IN'
+    pole_btpl: 'Pôle BTP Logistique'
+  '#required': true
+lieu_alea:
+  '#type': radios_other
+  '#title': 'Lieu du constat de l’aléa'
+  '#options':
+    'Agence ou Pôle': 'Agence ou Pôle'
+    Etablissement: Etablissement
+  '#other__placeholder': 'Précisez le lieu'
+  '#required': true
+agence_ou_pole:
+  '#type': select
+  '#title': 'Agence ou pole'
+  '#options':
+    'Agence et Pole de Port- Louis': 'Agence et Pole de Port- Louis'
+    'Agence et Pole du Gosier': 'Agence et Pole du Gosier'
+  '#states':
+    visible-slide:
+      ':input[name="lieu_alea[radios]"]':
+        value: 'Agence ou Pôle'
+etablissments:
+  '#type': select
+  '#title': Etablissments
+  '#options':
+    'Collèges':
+      'Fernand BALIN': 'Fernand BALIN (ANSE-BERTRAND)'
+      'Gourdeliane': 'Gourdeliane (BAIE-MAHAULT)'
+      'Maurice SATINEAU': 'Maurice SATINEAU (BAIE-MAHAULT)'
+      'Jean JAURES': 'Jean JAURES (BAILLIF)'
+      'Joseph PITAT': 'Joseph PITAT (BASSE-TERRE)'
+      'Fontaines Bouillantes': 'Fontaines Bouillantes (BOUILLANTE)'
+      'Germain SAINT- RUF': 'Germain SAINT- RUF (CAPESTERRE B-E)'
+      'Sylviane TELCHID': 'Sylviane TELCHID (CAPESTERRE B-E)'
+      'Nelson MANDELA': 'Nelson MANDELA (CAPESTERRE M-G)'
+      'Félix Aladin FLEMIN': 'Félix Aladin FLEMIN (DESHAIES)'
+      'Richard SAMUEL': 'Richard SAMUEL (GOURBEYRE)'
+      'Matéliane': 'Matéliane (GOYAVE)'
+      'Grand-Bourg': 'Grand-Bourg (GRAND BOURG)'
+      'Maryse CONDÉ': 'Maryse CONDÉ (LA DESIRADE)'
+      'Edmond BAMBUCK': 'Edmond BAMBUCK (LE GOSIER)'
+      'Appel du 18 juin': 'Appel du 18 juin (LE LAMENTIN)'
+      'Général de Gaulle': 'Général de Gaulle (LE MOULE)'
+      'Guénette': 'Guénette (LE MOULE)'
+      'Alexandre ISAAC': 'Alexandre ISAAC (LES ABYMES)'
+      'Aurélie LAMBOURDE': 'Aurélie LAMBOURDE (LES ABYMES)'
+      'Cité scolaire d’excellence sportive': 'Cité scolaire d’excellence sportive (LES ABYMES)'
+      'Raizet': 'Raizet (LES ABYMES)'
+      'Saint-John PERSE': 'Saint-John PERSE (LES ABYMES)'
+      'Archipel des Saintes': 'Archipel des Saintes (LES SAINTES)'
+      'Florette MORAND': 'Florette MORAND (MORNE-A-L’EAU)'
+      'Félix EBOUE': 'Félix EBOUE (PETIT-BOURG)'
+      'Maximilien VRECORD': 'Maximilien VRECORD (PETIT-CANAL)'
+      'Front de mer': 'Front de mer (POINTE-A-PITRE)'
+      'Jules MICHELET': 'Jules MICHELET (POINTE-A-PITRE)'
+      'Nestor De KERMADEC': 'Nestor De KERMADEC (POINTE-A-PITRE)'
+      'Sadi CARNOT': 'Sadi CARNOT (POINTE-A-PITRE)'
+      'Courbaril': 'Courbaril (POINTE-NOIRE)'
+      'Port-Louis': 'Port-Louis (PORT-LOUIS)'
+      'Mireille CHOISY': 'Mireille CHOISY (SAINT-BARTHELEMY)'
+      'Rémy NAINSOUTA': 'Rémy NAINSOUTA (SAINT-CLAUDE)'
+      'Alexandre MACAL': 'Alexandre MACAL (SAINT-FRANCOIS)'
+      'Albert BACLET': 'Albert BACLET (SAINT-LOUIS)'
+      'Mont des Accords': 'Mont des Accords (SAINT-MARTIN)'
+      'Roche gravée de Moho': 'Roche gravée de Moho (SAINT-MARTIN)'
+      'Soualiga': 'Soualiga (SAINT-MARTIN)'
+      'Eugène YSSAP': 'Eugène YSSAP (SAINTE-ANNE)'
+      'Olympe RAME DECORBIN': 'lympe RAME DECORBIN (SAINTE-ANNE)'
+      'Bébel': 'Bébel (SAINTE-ROSE)'
+      'Bois Rada': 'Bois Rada (SAINTE-ROSE)'
+      'Les Roches gravées': 'Les Roches gravées (TROIS-RIVIERES)'
+      'Suze ANGELY': 'Suze ANGELY (VIEUX-HABITANTS)'
+    'Lycées':
+      'LP Augustin ARRON': 'LP Augustin ARRON - BAIE-MAHAULT'
+      'LPO Charles COEFFIN': 'LPO Charles COEFFIN - BAIE-MAHAULT'
+      'LDM Georges NICOLO': 'LDM du Bâtiment et des Arts appliqués Georges NICOLO - BASSE-TERRE'
+      'LGT Gerville REACHE': 'LGT Gerville REACHE - BASSE-TERRE'
+      'LDM Paul LACAVE': 'LDM de l’automobile Paul LACAVE - CAPESTERRE B-E'
+      'LPO Hyacinthe BASTARAUD': 'LPO Hyacinthe BASTARAUD - GRAND BOURG'
+      'LDM Archipel Guadeloupe': 'LDM de l’Hôtellerie et de Tourisme Archipel Guadeloupe - LE GOSIER'
+      'LDM de Bertène JUMINER': 'LDM de l''habitat et des services associés Bertène JUMINER - LE LAMENTIN'
+      'LLP Louis DELGRES': 'LP Louis DELGRES - LE MOULE'
+      'LGT Baimbridge': 'LGT Baimbridge - LES ABYMES'
+      'LGT Félix PROTO': 'LGT Félix PROTO - LES ABYMES'
+      'LGT Jardin d''Essai': 'LGT Jardin d''Essai - LES ABYMES'
+      'LPO Chevalier de Saint-Georges': 'LPO Chevalier de Saint-Georges - LES ABYMES'
+      'LGT Faustin FLERET': 'LGT Faustin FLERET - MORNE-A-L''EAU'
+      'LP Gerty ARCHIMEDE': 'LP Gerty ARCHIMEDE - MORNE-A-L''EAU'
+      'LGT Droits de l''Homme': 'LGT Droits de l''Homme - PETIT-BOURG'
+      'LPO CARNOT': 'LPO CARNOT - POINTE-A-PITRE'
+      'LPO de Pointe-Noire': 'LPO de Pointe-Noire - POINTE-NOIRE'
+      'LPO Nord Grande-Terre': 'LPO Nord Grande-Terre - PORT-LOUIS'
+      'LDM DUCHARMOY': 'LDM du commerce, des services et de l''artisanat DUCHARMOY - SAINT-CLAUDE'
+      'LGT Robert Weinum': 'LGT Robert Weinum - SAINT-MARTIN'
+      'LP Daniella JEFFRY': 'LP Daniella JEFFRY - SAINT-MARTIN'
+      'LGT Yves LEBORGNE': 'LGT Yves LEBORGNE - SAINTE-ANNE'
+      'LGT Sonny RUPAIRE': 'LGT Sonny RUPAIRE - SAINTE-ROSE'
+
+etablissements:
+  '#type': term_select
+  '#title': Etablissements
+  '#vocabulary': etablissements_publics_second_de
+  '#tree_delimiter': '>'
+date_alea:
+  '#type': date
+  '#title': 'Date de l''aléa'
+  '#required': true
+heure_alea:
+  '#type': time
+  '#title': 'Heure de l''aléa'
+  '#states':
+    visible-slide:
+      - ':input[name="nature_du_dysfonctionnement"]':
+          value: prob_incident_pers_form
+      - xor
+      - ':input[name="nature_du_dysfonctionnement"]':
+          value: prob_incidents_pers_non_form
+container:
+  '#type': container
+  '#states':
+    visible-slide:
+      - ':input[name="nature_du_dysfonctionnement"]':
+          value: prob_incident_pers_form
+      - xor
+      - ':input[name="nature_du_dysfonctionnement"]':
+          value: prob_incidents_pers_non_form
+  precisions_nature_incident:
+    '#type': checkboxes_other
+    '#title': 'Précisions sur la nature de l''incident'
+    '#options':
+      'Insultes ou menaces': 'Insultes ou menaces'
+      'Insultes à caractère raciste, antisémite, homophobe': 'Insultes à caractère raciste, antisémite, homophobe'
+      "Violences physiques avec arme ou arme par destination\t": "Violences physiques avec arme ou arme par destination\t"
+      'Violences physiques sans arme': 'Violences physiques sans arme'
+      'Violences verbales': 'Violences verbales'
+      "Usages inappropriés des nouvelles technologies\t": "Usages inappropriés des nouvelles technologies\t"
+      'Port d’arme': 'Port d’arme'
+      'Dégradation de matériel/locaux': 'Dégradation de matériel/locaux'
+      Vol: Vol
+      "Consommation d’alcool\t": "Consommation d’alcool\t"
+      'Consommation de stupéfiants': 'Consommation de stupéfiants'
+      'Maladie, malaise, accident': 'Maladie, malaise, accident'
+    '#options_display': two_columns
+    '#other__placeholder': précisez
+  identification_victimes:
+    '#type': custom_composite
+    '#title': 'Identification de la Victime(s)'
+    '#element':
+      nom:
+        '#type': textfield
+        '#required': true
+        '#title': Nom
+      prenom:
+        '#type': textfield
+        '#required': true
+        '#title': Prénom
+      statut:
+        '#type': webform_select_other
+        '#options':
+          apprenant: Apprenant
+          formateur: Formateur
+          personnel_greta: 'Personnel greta'
+        '#required': true
+        '#title': Statut
+  auteur_identifie:
+    '#type': radios
+    '#title': 'L''auteur est-il identifié?'
+    '#options':
+      oui: Oui
+      non: Non
+  identification_auteurs:
+    '#type': custom_composite
+    '#title': 'Identification de l''auteurs'
+    '#states':
+      visible-slide:
+        ':input[name="auteur_identifie"]':
+          value: oui
+    '#element':
+      nom:
+        '#type': textfield
+        '#required': true
+        '#title': Nom
+      prenom:
+        '#type': textfield
+        '#required': true
+        '#title': Prénom
+      statut:
+        '#type': webform_select_other
+        '#options':
+          apprenant: Apprenant
+          formateur: Formateur
+          personnel_greta: 'Personnel greta'
+        '#required': true
+        '#title': Statut
+message:
+  '#type': textarea
+  '#title': Message
+  '#required': true
+  '#counter_type': word
+  '#counter_minimum': 1
+  '#counter_maximum': 150
+piece_jointe:
+  '#type': managed_file
+  '#title': 'Pièce jointe'
+  '#description': |-
+    <p>(ex CV, lettre motivation)</p>
+
+    <p>Extensions de fichier autorisées: odt odf pdf doc docx gz rar tar zip jpg jpeg<br />
+    Taille maximum de fichier: 12 MB</p>
+  '#description_display': after
+  '#file_help': none
+  '#max_filesize': '12'
+  '#file_extensions': 'odt odf pdf doc docx gz rar tar zip jpg jpeg'
+  '#sanitize': true
+terms_of_service:
+  '#type': terms_of_service
+  '#title': 'J''accepte que les données recueillies dans ce formulaire soient utilisées dans le cadre du traitement de ma demande. En savoir plus sur la gestion de vos {données personnelles}  '
+  '#required': true
+  '#required_error': 'Merci d''accepter les conditions de traitement de vos données personnelles'
+  '#terms_title': 'Finalité du traitement de vos données à caractère personnel '
+  '#terms_content': |-
+    Les informations recueillies dans le cadre de ce formulaire font l&#39;objet d&#39;un traitement informatique et sont destin&eacute;es aux agents habilit&eacute;s de la structure responsable du traitement de votre demande. Elles ne sont en aucun cas r&eacute;utilis&eacute;es &agrave; d&#39;autres fins.<br />
+    Conform&eacute;ment &agrave; la Loi n&deg; 78-17 du 6 janvier 1978 relative &agrave; l&#39;informatique, aux fichiers et aux libert&eacute;s modifi&eacute;e en 2004, vous disposez d&#39;un droit d&#39;acc&egrave;s et de rectification des donn&eacute;es relatives aux informations vous concernant. Vous disposez &eacute;galement d&#39;un droit d&#39;opposition au traitement.<br />
+    Consultez le site&nbsp;cnil.fr pour plus d&rsquo;informations sur vos droits.<br />
+    Pour exercer ces droits ou pour toute question sur le traitement de vos donn&eacute;es dans ce dispositif, vous pouvez contacter le responsable d&eacute;l&eacute;gu&eacute; &agrave; la protection des donn&eacute;es &agrave; l&#39;adresse &eacute;lectronique suivante:&nbsp;<a href="mailto:contact@gretaguadeloupe.fr">contact@gretaguadeloupe.fr</a>.&nbsp;
+test:
+  '#type': entity_select
+  '#title': test
+  '#target_type': taxonomy_term
+  '#selection_handler': 'default:taxonomy_term'
+  '#selection_settings':
+    target_bundles:
+      etablissements_publics_second_de: etablissements_publics_second_de
+    sort:
+      field: name
+      direction: asc
+actions:
+  '#type': webform_actions
+  '#title': 'Submit button(s)'
+  '#submit__label': 'Envoyer mon message'
+  '#submit__attributes':
+    class:
+      - 'btn btn-primary'

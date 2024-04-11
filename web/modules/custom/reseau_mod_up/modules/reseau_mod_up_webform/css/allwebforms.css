@@ -8,3 +8,23 @@ font-style: italic;
     color: #a11623;
     font-weight: bold;
 }
+
+.form-item-piece-jointe .js-form-type-checkbox, #edit-comment-offre-de-formation-checkboxes .js-form-type-checkbox {
+display:flex;
+}
+
+.form-radio.form-control {
+
+    appearance: auto;
+    width: auto;
+    display: inline-block;
+}
+
+.webform-options-display-side-by-side > div {
+
+    margin: 0.5rem 1.5rem 0 0;
+}
+
+.form-date {
+    margin-top: 0.25rem;
+}

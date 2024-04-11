@@ -82,7 +82,7 @@
 {% endif %}
 
 {%
-  set custom_link =  url('<front>')| render ~ string_link ~'/pre-inscription?objet='~  element['#object'].get('nid').value 
+  set custom_link =  url('<front>')| render ~ string_link ~'/pre-inscription?objet='~  element['#object'].get('nid').value ~ '#block-reseau-content'
 %}
 {# {{ kint(entity_type) }} #}
 {# {{ kint(_context) }} #}

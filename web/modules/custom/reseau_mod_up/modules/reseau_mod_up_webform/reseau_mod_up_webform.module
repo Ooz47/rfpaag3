@@ -202,7 +202,7 @@ function reseau_mod_up_webform_webform_submission_form_secteurs_ajax_callback(ar
 function reseau_mod_up_webform_menu_local_tasks_alter(&$data, $route_name, \Drupal\Core\Cache\RefinableCacheableDependencyInterface &$cacheability)
 {
   //  dsm($route_name);
-  if ($route_name == "entity.webform_submission.edit_form" || $route_name == "entity.webform_submission.canonical") {
+  if ($route_name == "entity.webform_submission.edit_form" || $route_name == "entity.webform_submission.canonical" || $route_name == "entity.webform_submission.table" || $route_name == "entity.webform_submission.text") {
     foreach ($data['tabs'][0] as $key => $tab) {
       // dsm($tab);
 
