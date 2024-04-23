@@ -1,1 +1,627 @@
 <?php
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+// use Drupal\Core\Render\Element\Url;
+use Drupal\views\ViewExecutable;
+use Drupal\webform\WebformSubmissionInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
+function reseau_mod_up_webform_dir_ggp_page_attachments_alter(array &$attachments)
+{
+
+  $webform = \Drupal::routeMatch()->getParameter('webform');
+  if ($webform instanceof \Drupal\webform\WebformInterface) {
+
+    if (($webform->get('id') == 'incidents_greta_cfa_de_la_guadel')
+      || ($webform->get('id') == 'dys_greta_cfa_de_la_guadeloupe')
+    ) {
+
+      $attachments['#attached']['library'][] = 'reseau_mod_up_webform_dir_ggp/extra.dirgretagp';
+    }
+  }
+  // $attachments['#attached']['library'][] = 'reseau_mod_up_webform_dir_ggp/extra.webformcustom';
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function reseau_mod_up_webform_dir_ggp_theme()
+{
+  // $theme['webform_submission_information__contact_greta_cfa_de_la_guadelou'] = [
+  //   'base hook' => 'node',
+  // ];
+
+  $theme['webform_submission__reclamation_greta_cfa_de_la_guad'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__reclamation_greta_cfa_de_la_guad'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission__dys_greta_cfa_de_la_guadeloupe'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__dys_greta_cfa_de_la_guadeloupe'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission__incidents_greta_cfa_de_la_guadel'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__incidents_greta_cfa_de_la_guadel'] = [
+    'base hook' => 'node',
+  ];
+
+  return $theme;
+}
+
+
+
+// function get_users_email_with_role($role)
+// {
+//     // $users = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['role' => 'gestionnaire_dir_ggp_do_da']);
+
+//     $userStorage = \Drupal::entityTypeManager()->getStorage('user');
+
+//     $query = $userStorage->getQuery();
+//     $uids = $query
+//       ->condition('status', '1')
+//       ->condition('roles', $role)
+//       ->execute();
+
+//     $users = $userStorage->loadMultiple($uids);
+
+//     $destinataires = [];
+//     if (!empty($users)) {
+//       foreach ($users as $user_key => $user) {
+//         if (!empty($user->get('mail')->getvalue()[0]['value'])) {
+//         $destinataires[] = $user->get('mail')->getvalue()[0]['value'];
+//       }
+//       }
+//     }
+
+//   return $destinataires;
+// };
+
+
+function get_users_email_with_fonction($role, $fonction)
+{
+  // $users = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['role' => 'gestionnaire_dir_ggp_do_da']);
+
+  $userStorage = \Drupal::entityTypeManager()->getStorage('user');
+
+  $query = $userStorage->getQuery();
+  $uids = $query
+    ->condition('status', '1')
+    ->condition('roles', $role)
+    ->condition('field_fonction', $fonction)
+    ->execute();
+
+  $users = $userStorage->loadMultiple($uids);
+  // dsm($users);
+  $destinataires = [];
+  if (!empty($users)) {
+    foreach ($users as $user_key => $user) {
+      if (!empty($user->get('mail')->getvalue()[0]['value'])) {
+        $destinataires[] = $user->get('mail')->getvalue()[0]['value'];
+      }
+    }
+  }
+
+  return $destinataires;
+};
+
+
+
+
+function reseau_mod_up_webform_dir_ggp_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+  reseau_mod_attach_form_id($form, $form['#id']);
+  // dsm($form);
+
+  if (($form_id === 'user_form') || ($form_id === 'user_register_form')) {
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+    //Si admin ou Webmaster reseau, fonction ne s'affiche que si gestionnaire dirGuadeloupe
+    if ($form['account']['roles']['#access']) {
+      $form['field_fonction']['#states'] = [
+        'visible' => [
+          ':input[name="roles"]' => ['value' => 'gestionnaire_incidents_reclamation_ggp'],
+        ],
+      ];
+
+      // on ajoute le states required
+      $form['field_fonction']['widget']['#states'] = [
+        'required' => [
+          ':input[name="roles"]' => ['value' => 'gestionnaire_incidents_reclamation_ggp'],
+        ],
+      ];
+      //Workaround du à Bug validation client sur select et radio
+      //https://www.drupal.org/node/1585930
+      //https://www.drupal.org/node/2951317
+      //On retire option _none et on rajoute une option NULL
+      unset($form['field_fonction']['widget']['#options']['_none']);
+      $addarray = [NULL => "- Aucun(e) -"];
+      $form['field_fonction']['widget']['#options'] = array_merge($addarray, $form['field_fonction']['widget']['#options']);
+    } else {
+      //Si pas admin ou webmaster reseau
+      // $form['field_fonction']['#states'] = [
+      //   'disabled' => [
+      //     ':input[name="roles"]' => ['!value' => 'gestionnaire_incidents_reclamation_ggp'],
+      //   ],
+      // ];
+      $form['field_fonction']['#access'] = FALSE;
+    }
+
+    // Si n'est pas gestionnaire dir guadeloupe, on s'assure que champ fonction est vide (pour effacer de la base de données)
+    if ($form['account']['roles']['#default_value'] != 'gestionnaire_incidents_reclamation_ggp') {
+      $form['field_fonction']['widget']['#default_value'][0] = '_none';
+    }
+  }
+}
+
+
+
+/*Gestion des filtres et affichage sur pages resultats views*/
+function reseau_mod_up_webform_dir_ggp_views_pre_view(ViewExecutable $view, $display_id, array &$args)
+{
+  //Vue réclamation accessible uniquement au DO/DA
+  if ($view->id() == 'copie_de_soumissions_de_webform' && $display_id == "embed_4") {
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+    if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
+      // dsm($current_user->get('field_fonction')->getValue()[0]['value']);
+      if (($current_user->get('field_fonction')->getValue()[0]['value'] != 'do_da')) {
+        throw new AccessDeniedHttpException();
+      }
+    }
+  }
+
+  //Vue Incidents accessible aux coordinateur de Pôle et à au DO/DA
+  if ($view->id() == 'copie_de_soumissions_de_webform' && $display_id == "embed_5") {
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+    //juste pour tester fonctionnement, à effacer/commenter en prod
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(87);
+    // dsm($current_user->get('field_fonction')->getValue()[0]['value']);
+
+    //
+    if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
+
+
+      if (isset($current_user->get('field_fonction')->getValue()[0]['value'])) {
+        $fonction = $current_user->get('field_fonction')->getValue()[0]['value'];
+        if (($fonction == 'rsni') || ($fonction == 'agfm')) {
+          throw new AccessDeniedHttpException();
+        }
+
+        $filters = $view->getDisplay()->getOption('filters');
+
+        switch ($fonction) {
+          case 'pole_hrt':
+            $pole_concerne = ['pole_hrt' => 'pole_hrt'];
+            //on renseigne filtre caché sur pole concerné
+            $filters["webform_submission_value"]["value"] = $pole_concerne;
+            //on retire filtrer exposed sur pole concerné
+            unset($filters["webform_submission_value_1"]);
+            break;
+          case 'pole_fg':
+            $pole_concerne = ['pole_fg' => 'pole_fg'];
+            //on renseigne filtre caché sur pole concerné
+            $filters["webform_submission_value"]["value"] = $pole_concerne;
+            //on retire filtrer exposed sur pole concerné
+            unset($filters["webform_submission_value_1"]);
+            break;
+          case 'pole_ssap':
+            $pole_concerne = ['pole_ssap' => 'pole_ssap'];
+            //on renseigne filtre caché sur pole concerné
+            $filters["webform_submission_value"]["value"] = $pole_concerne;
+            //on retire filtrer exposed sur pole concerné
+            unset($filters["webform_submission_value_1"]);
+            break;
+          case 'pole_in':
+            $pole_concerne = ['pole_in' => 'pole_in'];
+            //on renseigne filtre caché sur pole concerné
+            $filters["webform_submission_value"]["value"] = $pole_concerne;
+            //on retire filtrer exposed sur pole concerné
+            unset($filters["webform_submission_value_1"]);
+            break;
+          case 'pole_btp':
+            $pole_concerne = ['pole_btpl' => 'pole_btpl'];
+            //on renseigne filtre caché sur pole concerné
+            $filters["webform_submission_value"]["value"] = $pole_concerne;
+            //on retire filtrer exposed sur pole concerné
+            unset($filters["webform_submission_value_1"]);
+            break;
+          case 'do_da':
+            $pole_concerne = [
+              'pole_ssap' => 'pole_ssap',
+              'pole_btpl' => 'pole_btpl',
+              'pole_in' => 'pole_in',
+              'pole_fg' => 'pole_fg',
+              'pole_hrt' => 'pole_hrt',
+              'all' => 'all',
+            ];
+
+            unset($filters["webform_submission_value"]);
+            break;
+        }
+        $view->display_handler->overrideOption('filters', $filters);
+      }
+    }
+  }
+
+  //Vue Dysfonctionnement accessible aux RSNI et AGFM et DO/DA
+  if ($view->id() == 'copie_de_soumissions_de_webform' && $display_id == "embed_6") {
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+    if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+      //juste pour tester fonctionnement, à effacer/commenter en prod
+      // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+
+      //On met a jour filtre pour admin par rapport au problème Autres
+      //On  récupère les filtres en cours
+      $filters = $view->getDisplay()->getOption('filters');
+      //On met à jour nos filtres
+      unset($filters["webform_submission_value"]);
+      $view->display_handler->overrideOption('filters', $filters);
+      return;
+    }
+    //juste pour tester fonctionnement, à effacer/commenter en prod
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(41);
+    //
+    if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
+
+      // dsm($current_user->get('field_fonction')->getValue()[0]);
+      if (isset($current_user->get('field_fonction')->getValue()[0]['value'])) {
+        $fonction = $current_user->get('field_fonction')->getValue()[0]['value'];
+        if (($fonction != 'rsni') && ($fonction != 'agfm') && ($fonction != 'do_da')) {
+          throw new AccessDeniedHttpException();
+        }
+
+        //On  récupère les filtres en cours
+        $filters = $view->getDisplay()->getOption('filters');
+
+        switch ($fonction) {
+          case 'agfm':
+            $nature_incident = ['prob_non_informatique' => 'prob_non_informatique'];
+            //on renseigne filtre caché sur nature concerné
+            $filters["webform_submission_value"]["value"] = $nature_incident;
+            //on retire filtre exposed sur nature concerné
+            unset($filters["webform_submission_value_4"]);
+            break;
+          case 'rsni':
+            $nature_incident = ['prob_informatique' => 'prob_informatique'];
+            //on renseigne filtre caché sur nature concerné
+            $filters["webform_submission_value"]["value"] = $nature_incident;
+            //on retire filtre exposed sur nature concerné
+            unset($filters["webform_submission_value_4"]);
+
+            break;
+          case 'do_da':
+            //Non fonctionnel car ne prend pas en compte le cas ou autres est selectionné
+            // $nature_incident = [
+            //   'prob_informatique' => 'prob_informatique',
+            //   'prob_non_informatique' => 'prob_non_informatique',
+            //   'prob_incidents_pers_non_form' => 'prob_incidents_pers_non_form',
+            //   'all' => 'all',
+            // ];
+            //Donc on retire carrément le filtre caché
+            unset($filters["webform_submission_value"]);
+            break;
+        }
+
+        //On met à jour nos filtres
+        $view->display_handler->overrideOption('filters', $filters);
+      }
+    }
+  }
+}
+
+
+/* Modifie lien operation sur submission fonction de l'utilisateur en cours*/
+function reseau_mod_up_webform_dir_ggp_entity_operation_alter(array &$operations, \Drupal\Core\Entity\EntityInterface $entity)
+{
+  // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+  // $account = \Drupal::currentUser();
+
+  // if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+  //   //juste pour tester fonctionnement, à effacer/commenter en prod
+  //   // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(37);
+  //   // return;
+  // }
+
+  if ($entity->getEntityTypeId() == 'webform_submission') {
+    if (($entity->get('webform_id')->entity->get('id') == 'incidents_greta_cfa_de_la_guadel')
+      || ($entity->get('webform_id')->entity->get('id') == 'reclamation_greta_cfa_de_la_guad')
+      || ($entity->get('webform_id')->entity->get('id') == 'dys_greta_cfa_de_la_guadeloupe')
+    ) {
+
+      // dsm($operations);
+      $sub = $entity->load($entity->id());
+      //Si le statut est cloturé, on bloque modification
+      if ($sub->getElementData('statut') == 'Cloturé') {
+
+        if (isset($operations['edit'])) {
+          unset($operations['edit']);
+        }
+      }
+      if (isset($operations['resend'])) {
+        unset($operations['resend']);
+      }
+      if (isset($operations['duplicate'])) {
+        unset($operations['duplicate']);
+      }
+      if (isset($operations['delete'])) {
+        unset($operations['delete']);
+      }
+      if (isset($operations['notes'])) {
+        unset($operations['notes']);
+      }
+      // $operations = [];
+    }
+  }
+}
+
+
+/**
+ * Implements hook_entity_operation().
+ */
+function reseau_mod_up_webform_dir_ggp_entity_operation(EntityInterface $submission)
+{
+
+  $operations = [];
+  if ($submission instanceof WebformSubmissionInterface) {
+    // dsm($submission);
+    // dsm($submission->get('webform_id')->entity);
+    // dsm($submission->get('webform_id')->entity->get('id'));
+    if (($submission->get('webform_id')->entity->get('id') == 'reclamation_greta_cfa_de_la_guad')
+      || ($submission->get('webform_id')->entity->get('id') == 'incidents_greta_cfa_de_la_guadel')
+      || ($submission->get('webform_id')->entity->get('id') == 'dys_greta_cfa_de_la_guadeloupe')
+    ) {
+
+      if (($submission->getElementData('statut') !== 'En cours') && ($submission->getElementData('statut') !== 'Cloturé')) {
+
+        $operations['encours'] = [
+          'title' => t('Marquer comme: En cours'),
+          'weight' => 15,
+          'url' => Url::fromRoute('reseau_mod_up_webform_dir_ggp.webform_submission_marquerencours', [
+            'submission' => $submission->id(),
+          ], [
+            'query' => \Drupal::destination()->getAsArray(),
+          ]),
+        ];
+      }
+
+      // if ($submission->getElementData('statut') !== 'Cloturé') {
+
+      //   $operations['cloture'] = [
+      //     'title' => t('Marquer comme: Cloturé'),
+      //     'weight' => 15,
+      //     'url' => Url::fromRoute('reseau_mod_up_webform_dir_ggp.webform_submission_marquercloture', [
+      //       'submission' => $submission->id(),
+      //     ], [
+      //       'query' => \Drupal::destination()->getAsArray(),
+      //     ]),
+      //   ];
+      // }
+
+    }
+  }
+
+  return $operations;
+}
+
+
+function reseau_mod_up_webform_dir_ggp_menu_local_tasks_alter(&$data, $route_name, \Drupal\Core\Cache\RefinableCacheableDependencyInterface &$cacheability)
+{
+
+  if ($route_name == "entity.webform_submission.edit_form" || $route_name == "entity.webform_submission.canonical" || $route_name == "entity.webform_submission.table" || $route_name == "entity.webform_submission.text") {
+
+    foreach ($data['tabs'][0] as $key => $tab) {
+      if (($tab['#link']['title'] == "Renvoyer") || ($tab['#link']['title'] == "Notes")) {
+        $data['tabs'][0][$key]['#access'] = FALSE;
+      }
+    }
+    //si la soumission est cloturé, on retirer bouton modifier
+    $entity = reseau_mod_up_webform_dir_ggp_get_route_entity();
+    $entity_type = $entity ? $entity->getEntityTypeId() : NULL;
+
+    if ($entity->getElementData('statut') == 'Cloturé') {
+      $data['tabs'][0]['entity.webform_submission.edit_form']['#access'] = FALSE;
+    }
+  }
+
+  //On  retire lien vers téléchargement si fonction différnete de do_da
+  if ($route_name == "entity.webform.results_submissions") {
+
+
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+    if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
+      if (isset($current_user->get('field_fonction')->getValue()[0]['value'])) {
+        $fonction = $current_user->get('field_fonction')->getValue()[0]['value'];
+        if (($fonction != 'do_da')) {
+          foreach ($data['tabs'][1] as $key => $tab) {
+            // dsm($tab['#link']['title'] );
+            if ($tab['#link']['title'] == "Téléchargement") {
+              $data['tabs'][1][$key]['#access'] = FALSE;
+            }
+          }
+        }
+      }
+    }
+  }
+  $cacheability
+    ->addCacheContexts([
+      'user',
+    ]);
+  // dsm($cacheability);
+
+
+}
+
+/**
+ * Helper function to extract the entity for the supplied route.
+ *
+ * @return null|\Drupal\Core\Entity\ContentEntityInterface
+ */
+function reseau_mod_up_webform_dir_ggp_get_route_entity()
+{
+  $route_match = \Drupal::routeMatch();
+  // Entity will be found in the route parameters.
+  if (($route = $route_match->getRouteObject()) && ($parameters = $route->getOption('parameters'))) {
+    // Determine if the current route represents an entity.
+    foreach ($parameters as $name => $options) {
+      if (isset($options['type']) && strpos($options['type'], 'entity:') === 0) {
+        $entity = $route_match->getParameter($name);
+        if ($entity instanceof \Drupal\Core\Entity\ContentEntityInterface && $entity->hasLinkTemplate('canonical')) {
+          return $entity;
+        }
+        // Since entity was found, no need to iterate further.
+        return NULL;
+      }
+    }
+  }
+}
+
+
+function reseau_mod_up_webform_dir_ggp_preprocess_menu(&$variables)
+{
+
+  if (isset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d'])) {
+
+    $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+    //juste pour tester fonctionnement, à effacer/commenter en prod
+    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(104);
+    // dsm($current_user->get('field_fonction')->getValue()[0]['value']);
+
+
+    if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
+      // dsm($current_user->get('field_fonction')->getValue()[0]['value']);
+      if (isset($current_user->get('field_fonction')->getValue()[0]['value'])) {
+        $fonction = $current_user->get('field_fonction')->getValue()[0]['value'];
+        if (($fonction == 'rsni') || ($fonction == 'agfm')) {
+          if (isset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.incidents'])) {
+            unset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.incidents']);
+          }
+          if (isset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.reclamations'])) {
+            unset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.reclamations']);
+          }
+        }
+
+        if (($fonction != 'rsni') && ($fonction != 'agfm') && ($fonction != 'do_da')) {
+          if (isset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.reclamations'])) {
+            unset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.reclamations']);
+          }
+
+          if (isset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.dysfonctionements'])) {
+            unset($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['below']['reseau_mod_up_webform_dir_ggp.dysfonctionements']);
+          }
+        }
+      }
+    }
+    //  $variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['#cache']['max-age'] = 0;
+    //  $variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']['#cache']['contexts'] = 'user';
+    //  dsm($variables['items']['menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d']);
+  }
+  $variables['#cache']['contexts'][] = 'user';
+  // dsm($variables);
+
+}
+
+function reseau_mod_up_webform_dir_ggp_webform_submission_access(\Drupal\Core\Entity\EntityInterface $entity, $operation, \Drupal\Core\Session\AccountInterface $account)
+{
+
+
+  $current_user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
+
+  if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
+
+    if (isset($current_user->get('field_fonction')->getValue()[0]['value'])) {
+
+      $fonction = $current_user->get('field_fonction')->getValue()[0]['value'];
+      // dsm($operation);
+      if ($operation == "delete") {
+        return AccessResult::forbidden();
+      } else {
+
+        if ($fonction == "do_da") {
+          return AccessResult::allowed();
+        } else {
+
+
+
+          switch ($fonction) {
+            case 'agfm':
+              $webform_acces = ['dys_greta_cfa_de_la_guadeloupe'];
+              $nature_incident = ['prob_non_informatique'];
+
+              break;
+
+            case 'rsni':
+              $webform_acces = ['dys_greta_cfa_de_la_guadeloupe'];
+              $nature_incident = ['prob_informatique'];
+              break;
+
+            case 'pole_hrt':
+              $webform_acces = ['incidents_greta_cfa_de_la_guadel'];
+              $nature_incident = ['prob_incident_pers_form'];
+              $pole_concerne = ['pole_hrt'];
+              break;
+            case 'pole_fg':
+              $webform_acces = ['incidents_greta_cfa_de_la_guadel'];
+              $nature_incident = ['prob_incident_pers_form'];
+              $pole_concerne = ['pole_fg'];
+              break;
+            case 'pole_ssap':
+              $webform_acces = ['incidents_greta_cfa_de_la_guadel'];
+              $nature_incident = ['prob_incident_pers_form'];
+              $pole_concerne = ['pole_ssap'];
+              break;
+            case 'pole_in':
+              $webform_acces = ['incidents_greta_cfa_de_la_guadel'];
+              $nature_incident = ['prob_incident_pers_form'];
+              $pole_concerne = ['pole_in'];
+              break;
+            case 'pole_btp':
+              $webform_acces = ['incidents_greta_cfa_de_la_guadel'];
+              $nature_incident = ['prob_incident_pers_form'];
+              $pole_concerne = ['pole_btpl'];
+              break;
+            default:
+              $webform_acces = [''];
+              $nature_incident = [''];
+              $pole_concerne = [''];
+              break;
+          }
+
+          if ((in_array($entity->get('webform_id')->entity->get('id'), $webform_acces))
+            && (in_array($entity->getElementData('nature_dysfonctionnement'), $nature_incident))
+          ) {
+
+            if ($entity->getElementData('nature_dysfonctionnement') == 'prob_incident_pers_form') {
+              if (in_array($entity->getElementData('pole_concerne'), $pole_concerne)) {
+
+                return AccessResult::allowed();
+              } else {
+                return AccessResult::forbidden();
+              }
+            } else {
+              return AccessResult::allowed();
+            }
+          } else {
+            return AccessResult::forbidden();
+          }
+        }
+      }
+    }
+    //pas de fonction enregistrée
+    else {
+      return AccessResult::forbidden();
+    }
+  }
+}

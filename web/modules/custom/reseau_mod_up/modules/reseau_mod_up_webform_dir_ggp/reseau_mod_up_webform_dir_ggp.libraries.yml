@@ -10,10 +10,10 @@
 #     theme:
 #       css/webform-back.css: {}
 
-# extra.cfapag:
-#   css:
-#     theme:
-#       css/inscription-cfapag.css: {}
+extra.dirgretagp:
+  css:
+    theme:
+      css/dir_ggp.css: {}
 
 reseau_mod_up_webform_dir_ggp:
   dependencies:

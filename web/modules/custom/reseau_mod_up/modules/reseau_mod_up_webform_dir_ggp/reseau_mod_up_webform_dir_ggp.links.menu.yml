@@ -1,0 +1,20 @@
+reseau_mod_up_webform_dir_ggp.incidents:
+  title: 'Incidents GRETA Guadeloupe'
+  parent: 'menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d'
+  route_name: entity.webform.results_submissions
+  route_parameters: { webform: 'incidents_greta_cfa_de_la_guadel'}
+  weight: 11
+
+reseau_mod_up_webform_dir_ggp.dysfonctionements:
+  title: 'Dysfonctionnements GRETA Guadeloupe'
+  parent: 'menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d'
+  route_name: entity.webform.results_submissions
+  route_parameters: { webform: 'dys_greta_cfa_de_la_guadeloupe'}
+  weight: 11
+
+reseau_mod_up_webform_dir_ggp.reclamations:
+  title: 'Réclamations GRETA Guadeloupe'
+  parent: 'menu_link_content:2ecc4ecb-db17-4c7d-a4f3-8f656f90fe2d'
+  route_name: entity.webform.results_submissions
+  route_parameters: { webform: 'reclamation_greta_cfa_de_la_guad'}
+  weight: 11

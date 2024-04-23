@@ -1,0 +1,45 @@
+#edit-precisions-nature-incident-checkboxes .js-form-type-checkbox {
+display:flex;
+}
+
+
+#identification_victimes_table table .js-form-type-textfield,
+#identification_victimes_table table .js-form-type-select,
+#identification_auteurs_table table .js-form-type-textfield,
+#identification_auteurs_table table .js-form-type-select
+/* table#edit-identification-victimes-items .form-item */
+ {
+margin: .5rem 0;
+}
+
+#identification_victimes_table table td,
+#identification_auteurs_table table td
+
+{
+    width: 33%;
+}
+
+#identification_victimes_table .webform-multiple-add,
+#identification_auteurs_table .webform-multiple-add
+ {
+    width: 25%;
+    margin: auto;
+}
+
+.form-item-auteur-identifie #edit-auteur-identifie .form-item label.form-required::after {
+    display: none;
+}
+
+
+.webform-submission-form > .form-wrapper  #identification_victimes_table > .form-item:not(.h1, .h2) > label,
+.webform-submission-form > .form-wrapper  #identification_auteurs_table > .form-item:not(.h1, .h2) > label
+ {
+    text-shadow: 1px 1px 1px #d7d6d6;
+}    
+
+
+.webform-submission-form > .form-wrapper.incidents-personnes
+ {
+    border: 1px solid #ced4da4d;
+    padding: 0 1rem;
+} 

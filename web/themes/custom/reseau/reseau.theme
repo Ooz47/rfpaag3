@@ -147,11 +147,11 @@ function reseau_preprocess_node(&$variables)
         $variables['content']['field_pre_requis_complement']['#label_display'] = 'above';
       }
 
-      // if ( $node->hasField('field_public_cible') && !$node->get('field_public_cible')->isEmpty() ) {
-      // } else {
+      if ( $node->hasField('field_public_cible') && !$node->get('field_public_cible')->isEmpty() ) {
+      } else {
       $variables['content']['field_public_cible_complement']['#title'] = "Public cible";
       $variables['content']['field_public_cible_complement']['#label_display'] = 'above';
-      // }
+      }
       // dsm($node->nid->value);
       // if (($node->nid->value == '531') || ($node->nid->value == '268')) {
       // if ($node->hasField('field_fmt_image') && !$node->get('field_fmt_image')->isEmpty()) {
