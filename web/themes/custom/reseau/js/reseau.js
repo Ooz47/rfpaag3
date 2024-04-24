@@ -171,6 +171,33 @@
         });
       });
 
+      /* Lien formation CFAPAG */
+    
+    //   function isEncoded(uri) {
+    //     uri = uri || '';
+      
+    //     return uri !== decodeURIComponent(uri);
+    //   }
+    //   function fullyDecodeURI(uri){
+
+    //     while (isEncoded(uri)){
+    //       uri = decodeURIComponent(uri);
+    //     }
+      
+    //     return uri;
+    //   }
+
+
+    //   $(context).find("#views-exposed-form-recherche-formations-page-1").once("some-arbitrary-but-unique-key6").each(function () {
+    //     let currentUrl = window.location.href;
+    //     // console.log(currentUrl);
+    //     // console.log(fullyDecodeURI(currentUrl));
+    //     // console.log(decodedURL);
+    //     if(currentUrl.includes("structure%5B4%5D=4")) {
+    //       location.replace(fullyDecodeURI(currentUrl));
+    //     }
+        
+    // });
 
     }
   };

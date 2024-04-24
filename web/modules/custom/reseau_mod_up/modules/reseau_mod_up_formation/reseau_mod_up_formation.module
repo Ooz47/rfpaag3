@@ -5,6 +5,7 @@
  * Contains reseau_mod_up_formation.module.
  */
 
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_entity_type_alter().
@@ -64,4 +65,57 @@ function reseau_mod_up_formation_theme_suggestions_node(array $variables)
 
 
   return $suggestions;
+}
+
+
+/** Ms **/
+function reseau_mod_up_formation_views_pre_build(ViewExecutable $view)
+{
+
+
+  if ($view->id() == 'sliders') {
+    if ($view->current_display == 'block_5') {
+      $current_path = \Drupal::service('path.current')->getPath();
+      $result = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
+
+      //       $vid = 'public';
+      // $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
+      // foreach ($terms as $term) {
+
+      //   $output = Html::getClass($term->name);
+
+      //  $term_data[] = array(
+      //   'id' => $term->tid,
+      //   'name' => $output
+      //  );
+      // }
+      // dsm($term_data);
+
+      switch (basename($result)) {
+        case 'demandeur-demploi':
+          $tax_id = '11';
+          break;
+        case 'jeune-16-29-ans':
+          $tax_id = '12';
+          break;
+        case 'salarie':
+          $tax_id = '15';
+          break;
+        case 'individuel-autre-statut':
+          $tax_id = '17';
+          break;
+        case 'employeur':
+          $tax_id = '20';
+          break;
+        case 'partenaires':
+          $tax_id = '13';
+          break;
+
+        default:
+          $tax_id = 'all';
+          break;
+      }
+      $view->args[0] = $tax_id;
+    }
+  }
 }

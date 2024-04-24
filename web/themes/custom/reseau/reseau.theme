@@ -23,15 +23,19 @@ function reseau_theme_suggestions_slick_alter(array &$suggestions, array $variab
 
       $viewmode = explode('-', $settings['instance_id']);
       // Kint::dump($settings['current_view_mode']);
+      // dsm($viewmode);
+      // dsm($settings);
 
       if ($settings['view_name'] != 'actualites') {
 
 
+        if (isset($settings['current_view_mode'])) {
         if ($viewmode['2'] == $settings['current_view_mode']) {
 
           $suggestions[] = 'slick__' . strtr($settings['view_name'], '-', '_') . '__' . strtr($settings['current_view_mode'], '-', '_');
         } else {
           $suggestions[] = 'slick__sliders__' . $viewmode['2'];
+        }
         }
       } else {
         $suggestions[] = 'slick__' . strtr($settings['view_name'], '-', '_') . '__' . strtr($settings['current_view_mode'], '-', '_');
