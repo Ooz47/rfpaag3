@@ -68,19 +68,19 @@
 		</div>
 	</div>
 
-<button type="button" id="btnAccesRapide" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasStructure">
-  Accès rapide aux structures
-</button>
+	<button type="button" id="btnAccesRapide" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasStructure">
+		Accès rapide aux structures
+	</button>
 
 
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasStructure" aria-labelledby="offcanvasStructureLabel" style="    width: 269px;">
+	<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasStructure" aria-labelledby="offcanvasStructureLabel" style="    width: 269px;">
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title" id="offcanvasStructureLabel">Accès rapide aux structures</h5>
 			<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 		<div class="offcanvas-body">
 
-{{ drupal_entity('block_content', '10') }}
+			{{ drupal_entity('block_content', '10') }}
 
 		</div>
 	</div>
@@ -161,14 +161,22 @@
 					</div>
 				</main>
 			{% endif %}
-	<div class="profil container-fluid">
+			<div class="blockformations container-fluid">
+				{% if page.blockformations %}
+					<div class="container-xl">
+						{{ page.blockformations }}
+					</div>
+				{% endif %}
+			</div>
+
+			<div class="profil container-fluid">
 				{% if page.profil %}
 					<div class="container-xl">
 						{{ page.profil }}
 					</div>
 				{% endif %}
 			</div>
-			
+
 			<div class="quisommesnous container-fluid" id="main-content">
 				{% if page.quisommesnous %}
 					<div class="container-xl">
@@ -177,9 +185,6 @@
 				{% endif %}
 			</div>
 
-			
-
-		
 
 			<div class="actualitesagenda container-fluid">
 				{% if page.actualitesagenda %}

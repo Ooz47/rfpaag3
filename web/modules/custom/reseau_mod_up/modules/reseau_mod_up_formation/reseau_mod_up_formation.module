@@ -68,54 +68,59 @@ function reseau_mod_up_formation_theme_suggestions_node(array $variables)
 }
 
 
-/** Ms **/
+/** Block Formation associé au profil **/
 function reseau_mod_up_formation_views_pre_build(ViewExecutable $view)
 {
 
 
-  if ($view->id() == 'sliders') {
-    if ($view->current_display == 'block_5') {
+  if ($view->id() == 'blocks_formations') {
+    if ($view->current_display == 'block_1') {
       $current_path = \Drupal::service('path.current')->getPath();
       $result = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
-
-      //       $vid = 'public';
-      // $terms =\Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree($vid);
-      // foreach ($terms as $term) {
-
-      //   $output = Html::getClass($term->name);
-
-      //  $term_data[] = array(
-      //   'id' => $term->tid,
-      //   'name' => $output
-      //  );
-      // }
-      // dsm($term_data);
+ 
+      
 
       switch (basename($result)) {
         case 'demandeur-demploi':
           $tax_id = '11';
+          $textButton = "demandeurs d'emploi";
           break;
         case 'jeune-16-29-ans':
           $tax_id = '12';
+          $textButton = "jeunes 16-29ans";
           break;
         case 'salarie':
           $tax_id = '15';
+          $textButton = "salariés";
           break;
         case 'individuel-autre-statut':
           $tax_id = '17';
+          $textButton = "individuels et autre statut";
           break;
         case 'employeur':
           $tax_id = '20';
+          $textButton = "employeurs";
           break;
         case 'partenaires':
           $tax_id = '13';
+          $textButton = "partenaires";
           break;
 
         default:
           $tax_id = 'all';
+          $textButton = "pour tous les profils";
           break;
       }
       $view->args[0] = $tax_id;
+
+      // dsm($view->display_handler->handlers['footer']['area']->options['content']["value"]);
+
+      $view->display_handler->handlers['footer']['area']->options['content']['value'] = "<form method=\"post\" action=\"/formations\" class=\"inline\">
+      <input type=\"hidden\" name=\"profil[".$tax_id."]\" value=\"".$tax_id."\">
+      <button type=\"submit\" name=\"submit_param\" value=\"submit_value\" class=\"bouton btn btn-primary btn-sm\">
+       Voir toutes les formations pour les ".$textButton."
+      </button>
+      </form>";
     }
   }
 }
