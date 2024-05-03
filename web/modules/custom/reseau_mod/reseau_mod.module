@@ -126,14 +126,14 @@ const WEBMASTER_GRETA_GUADELOUPE = '1';
 const WEBMASTER_GIPDAIFI = '3';
 const WEBMASTER_GRETA_SXMSBH = '2';
 const WEBMASTER_CFAPAG = '4';
-const WEBMASTER_CAPSBH = '5';
+const WEBMASTER_CFASBH = '5';
 const WEBMASTER_RESEAU = '8';
 
 const NAME_GRETA_GUADELOUPE = 'greta-guadeloupe';
 const NAME__GIPDAIFI = 'gip-daifi';
 const NAME_GRETA_SXMSBH = 'greta-stmartin-stbarth';
 const NAME_CFAPAG = 'cfapag:';
-const NAME_CAPSBH = 'capsbh';
+const NAME_CFASBH = 'cfa-sbh';
 const NAME_RESEAU = 'reseau';
 
 //récupère la structure associée au role de l'utilisateur courant
@@ -149,7 +149,7 @@ function get_user_structure_from_role($user)
   } elseif ($user->hasRole('webmaster_cfapag')) {
     $structure_id = WEBMASTER_CFAPAG;
   } elseif ($user->hasRole('webmaster_cfasbh')) {
-    $structure_id = WEBMASTER_CAPSBH;
+    $structure_id = WEBMASTER_CFASBH;
   }
   //administrtor ou webmster_reseau
   else {
@@ -171,7 +171,7 @@ function get_user_structure_name_from_role($user)
   } elseif ($user->hasRole('webmaster_cfapag')) {
     $structure_name = NAME_CFAPAG;
   } elseif ($user->hasRole('webmaster_cfasbh')) {
-    $structure_name = NAME_CAPSBH;
+    $structure_name = NAME_CFASBH;
   }
   //administrtor ou webmster_reseau
   else {
