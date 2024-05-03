@@ -185,11 +185,14 @@ function reseau_mod_up_webform_dir_ggp_views_pre_view(ViewExecutable $view, $dis
   //Vue Incidents accessible aux coordinateur de Pôle et à au DO/DA
   if ($view->id() == 'copie_de_soumissions_de_webform' && $display_id == "embed_5") {
     $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
-    //juste pour tester fonctionnement, à effacer/commenter en prod
-    // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(87);
-    // dsm($current_user->get('field_fonction')->getValue()[0]['value']);
-
-    //
+  
+    if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+      $filters = $view->getDisplay()->getOption('filters');
+      //On met à jour nos filtres
+      unset($filters["webform_submission_value"]);
+      $view->display_handler->overrideOption('filters', $filters);
+      return;
+    }
     if (($current_user->hasRole('gestionnaire_incidents_reclamation_ggp'))) {
 
 

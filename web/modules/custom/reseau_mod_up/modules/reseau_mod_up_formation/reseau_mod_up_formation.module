@@ -5,6 +5,7 @@
  * Contains reseau_mod_up_formation.module.
  */
 
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
 
 /**
@@ -77,8 +78,8 @@ function reseau_mod_up_formation_views_pre_build(ViewExecutable $view)
     if ($view->current_display == 'block_1') {
       $current_path = \Drupal::service('path.current')->getPath();
       $result = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
- 
-      
+
+
 
       switch (basename($result)) {
         case 'demandeur-demploi':
@@ -116,11 +117,80 @@ function reseau_mod_up_formation_views_pre_build(ViewExecutable $view)
       // dsm($view->display_handler->handlers['footer']['area']->options['content']["value"]);
 
       $view->display_handler->handlers['footer']['area']->options['content']['value'] = "<form method=\"post\" action=\"/formations\" class=\"inline\">
-      <input type=\"hidden\" name=\"profil[".$tax_id."]\" value=\"".$tax_id."\">
+      <input type=\"hidden\" name=\"profil[" . $tax_id . "]\" value=\"" . $tax_id . "\">
       <button type=\"submit\" name=\"submit_param\" value=\"submit_value\" class=\"bouton btn btn-primary btn-sm\">
-       Voir toutes les formations pour les ".$textButton."
+       Voir toutes les formations pour les " . $textButton . "
       </button>
       </form>";
     }
   }
+
+  // if ($view->id() == 'blocks_formations') {
+  //   if ($view->current_display == 'block_2') {
+  //     dsm($view);
+  //   }
+  // }
 }
+
+function reseau_mod_up_formation_views_pre_render(ViewExecutable $view)
+{
+  if ($view->id() == 'blocks_formations') {
+    if ($view->current_display == 'block_2') {
+      // dsm($view);
+      //gOn récupère les row result
+      $results = $view->result;
+
+      $array_formations = [];
+
+      //Pour chaque résultat
+      foreach ($results as $key => $result) {
+        // il existe déjà au moins une occurence
+        if (in_array($result->_entity->get('field_structure_associee')->getValue()[0]['target_id'], $array_formations)) {
+          //on compte combien
+          $vals = array_count_values($array_formations);
+
+          // affiche 1 résultat, mettre ' == 1' pour afficher 2 resultats par structure
+          if ($vals[$result->_entity->get('field_structure_associee')->getValue()[0]['target_id']] != 1) {
+            $array_formations[] = $result->_entity->get('field_structure_associee')->getValue()[0]['target_id'];
+          } else {
+            // on unset se resultat
+            unset($view->result[$key]);
+          }
+        } else {
+          //sinon on l'ajoute
+          $array_formations[] = $result->_entity->get('field_structure_associee')->getValue()[0]['target_id'];
+        }
+      }
+
+      //  dsm($array_formations);
+      $vals = array_count_values($array_formations);
+      //  dsm($vals);
+    }
+  }
+}
+
+// function reseau_mod_up_formation_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+//   // make sure we're altering the correct view
+//   if ($view->storage->get('id') === 'blocks_formations' && $view->current_display === 'block_2') {
+//     // foreach top level condition group
+//     // foreach ($query->where as &$condition_group) {
+//     //   // call helper function to recursively alter conditions
+//     //   _recursively_alter_query_conditions($condition_group['conditions']);
+//     // }
+//     foreach ($query->where as &$condition_group) {
+//       // call helper function to recursively alter conditions
+//       dsm($condition_group['conditions']);
+//     }
+//     // $query->groupBy('node.nid');
+//     dsm($view);
+//   }
+// }
+
+// function reseau_mod_up_formation_query_alter(Drupal\Core\Database\Query\AlterableInterface $query) {
+//   if ($query->getMetaData('view') && $query->getMetaData('view')->id() === 'blocks_formations') {
+//     // $group_by =& $query->getGroupBy();
+//     // unset($group_by['users_field_data.uid']);
+//     $query->groupBy('node__field_structure_associee.field_structure_associee_target_id');
+//     dsm($query);
+//   }
+// }
