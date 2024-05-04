@@ -9,21 +9,13 @@
       $(context).find(".popupaccueil").once("popupaccueilpresent").each(function () {
         var myModalEl = document.querySelector('.popupaccueil')
         // var modal = bootstrap.Modal.getOrCreateInstance(myModalEl) 
-      
-        var myModal = new bootstrap.Modal(myModalEl,  {
+
+        var myModal = new bootstrap.Modal(myModalEl, {
           keyboard: true
         })
         myModal.show();
       });
 
-      $(context).find("#block-reseau-footer").once("some-arbitrary-but-unique-key").each(function () {
-        $('#block-reseau-footer li').first().on('click', function (e) {
-          e.preventDefault();
-          window.location = "javascript:tarteaucitron.userInterface.openPanel();"
-          $('#tarteaucitronBack').fadeIn(300);
-          $('#tarteaucitron').fadeIn(500);
-        });
-      });
 
       $(context).find(".remotevideo").once("some-arbitrary-but-unique-key1").each(function () {
         $(document).on("click", ".remote_video_disabled", function (e) {
@@ -43,17 +35,19 @@
         });
       });
 
-      function scrollToAnchor(){
+      function scrollToAnchor() {
         var aTag = $(".horizontal-tabs-panes");
-        $('html,body').animate({scrollTop: aTag.offset().top - 100},400);
-    }
-    $(context).find(".page-node-verticale .horizontal-tabs-list").once("some-arbitrary-but-unique-keylast").each(function () {
-      $(document).on("click", ".horizontal-tab-button", function (e) {
-        // e.preventDefault();
-        scrollToAnchor();
+        $('html,body').animate({
+          scrollTop: aTag.offset().top - 100
+        }, 400);
+      }
+      $(context).find(".page-node-verticale .horizontal-tabs-list").once("some-arbitrary-but-unique-keylast").each(function () {
+        $(document).on("click", ".horizontal-tab-button", function (e) {
+          // e.preventDefault();
+          scrollToAnchor();
+        });
       });
-    });
-    
+
 
 
       /* Cookie accessibilité */
@@ -149,10 +143,10 @@
 
 
       /* Custom nav pour agenda slick */
-  
+
       $(".agenda-view .slick-prev").css("opacity", 0);
       $(context).find(".agenda-view").once("some-arbitrary-but-unique-key5").each(function () {
-     
+
         $('.agenda-view .slick-prev').click(function () {
           $('.slick--view--agenda .slick__slider').slick('slickPrev');
           $(".agenda-view .slick-next").css("opacity", 1);
@@ -171,33 +165,71 @@
         });
       });
 
+
+
+
+      const isElementXPercentInViewport = function (el, percentVisible) {
+        let
+          rect = el.getBoundingClientRect(),
+          windowHeight = (window.innerHeight || document.documentElement.clientHeight);
+
+        return !(
+          Math.floor(100 - (((rect.top >= 0 ? 0 : rect.top) / + -rect.height) * 100)) < percentVisible ||
+          Math.floor(100 - ((rect.bottom - windowHeight) / rect.height) * 100) < percentVisible
+        )
+      };
+
+      $(context).find("#block-reseau-footer").once("some-arbitrary-but-unique-key").each(function () {
+        $('#block-reseau-footer li').first().on('click', function (e) {
+          e.preventDefault();
+          window.location = "javascript:tarteaucitron.userInterface.openPanel();"
+          $('#tarteaucitronBack').fadeIn(300);
+          $('#tarteaucitron').fadeIn(500);
+        });
+
+
+/* Fonction scroll vers contenu principal si pas dans viewport */
+        // window.addEventListener('load', function () {
+        //   const el = document.querySelector('.contenuprincipal');
+        //   console.log(el);
+        //   console.log(isElementXPercentInViewport(el, 20));
+        //   if (isElementXPercentInViewport(el, 10) == false) {
+        //     el.scrollIntoView(true);
+        //   }
+        // })
+/*** */
+
+      });
+
       /* Lien formation CFAPAG */
-    
-    //   function isEncoded(uri) {
-    //     uri = uri || '';
-      
-    //     return uri !== decodeURIComponent(uri);
-    //   }
-    //   function fullyDecodeURI(uri){
 
-    //     while (isEncoded(uri)){
-    //       uri = decodeURIComponent(uri);
-    //     }
-      
-    //     return uri;
-    //   }
+      //   function isEncoded(uri) {
+      //     uri = uri || '';
+
+      //     return uri !== decodeURIComponent(uri);
+      //   }
+      //   function fullyDecodeURI(uri){
+
+      //     while (isEncoded(uri)){
+      //       uri = decodeURIComponent(uri);
+      //     }
+
+      //     return uri;
+      //   }
 
 
-    //   $(context).find("#views-exposed-form-recherche-formations-page-1").once("some-arbitrary-but-unique-key6").each(function () {
-    //     let currentUrl = window.location.href;
-    //     // console.log(currentUrl);
-    //     // console.log(fullyDecodeURI(currentUrl));
-    //     // console.log(decodedURL);
-    //     if(currentUrl.includes("structure%5B4%5D=4")) {
-    //       location.replace(fullyDecodeURI(currentUrl));
-    //     }
-        
-    // });
+      //   $(context).find("#views-exposed-form-recherche-formations-page-1").once("some-arbitrary-but-unique-key6").each(function () {
+      //     let currentUrl = window.location.href;
+      //     // console.log(currentUrl);
+      //     // console.log(fullyDecodeURI(currentUrl));
+      //     // console.log(decodedURL);
+      //     if(currentUrl.includes("structure%5B4%5D=4")) {
+      //       location.replace(fullyDecodeURI(currentUrl));
+      //     }
+
+      // });
+
+
 
     }
   };
