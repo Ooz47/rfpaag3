@@ -189,14 +189,14 @@
 
 
 /* Fonction scroll vers contenu principal si pas dans viewport */
-        // window.addEventListener('load', function () {
-        //   const el = document.querySelector('.contenuprincipal');
-        //   console.log(el);
-        //   console.log(isElementXPercentInViewport(el, 20));
-        //   if (isElementXPercentInViewport(el, 10) == false) {
-        //     el.scrollIntoView(true);
-        //   }
-        // })
+        window.addEventListener('load', function () {
+          const el = document.querySelector('.contenuprincipal .webform-submission-form');
+          console.log(el);
+          console.log(isElementXPercentInViewport(el, 20));
+          if (isElementXPercentInViewport(el, 10) == false) {
+            el.scrollIntoView(true);
+          }
+        })
 /*** */
 
       });
