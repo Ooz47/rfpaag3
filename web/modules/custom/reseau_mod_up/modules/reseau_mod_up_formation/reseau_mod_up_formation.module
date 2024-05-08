@@ -136,10 +136,10 @@ function reseau_mod_up_formation_views_pre_render(ViewExecutable $view)
 {
   if ($view->id() == 'blocks_formations') {
     if ($view->current_display == 'block_2') {
-      // dsm($view);
+ 
       //gOn récupère les row result
       $results = $view->result;
-
+      // dsm($results);
       $array_formations = [];
 
       //Pour chaque résultat
