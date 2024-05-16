@@ -12,8 +12,11 @@ function reseau_mod_up_webform_dir_ggp_page_attachments_alter(array &$attachment
 {
 
   $webform = \Drupal::routeMatch()->getParameter('webform');
+  // dsm(\Drupal::routeMatch()->getParameter('webform_submission'));
+  $webform_submission = Drupal::routeMatch()->getParameter('webform_submission');
+  //
   if ($webform instanceof \Drupal\webform\WebformInterface) {
-
+    // dsm($webform);
     if (($webform->get('id') == 'incidents_greta_cfa_de_la_guadel')
       || ($webform->get('id') == 'dys_greta_cfa_de_la_guadeloupe')
     ) {
@@ -21,6 +24,15 @@ function reseau_mod_up_webform_dir_ggp_page_attachments_alter(array &$attachment
       $attachments['#attached']['library'][] = 'reseau_mod_up_webform_dir_ggp/extra.dirgretagp';
     }
   }
+
+  if ($webform_submission instanceof \Drupal\webform\WebformSubmissionInterface) {
+    // dsm($webform_submission->get('webform_id')->getValue()[0]['target_id']);
+    if (($webform_submission->get('webform_id')->getValue()[0]['target_id'] == 'incidents_greta_cfa_de_la_guadel')  ) {
+
+    $attachments['#attached']['library'][] = 'reseau_mod_up_webform_dir_ggp/extra.dirgretagp';
+  }
+  }
+
   // $attachments['#attached']['library'][] = 'reseau_mod_up_webform_dir_ggp/extra.webformcustom';
 }
 
@@ -123,7 +135,7 @@ function get_users_email_with_fonction($role, $fonction)
 function reseau_mod_up_webform_dir_ggp_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
 {
   reseau_mod_attach_form_id($form, $form['#id']);
-  // dsm($form);
+  // dsm($form_id);
 
   if (($form_id === 'user_form') || ($form_id === 'user_register_form')) {
     // $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
@@ -165,7 +177,6 @@ function reseau_mod_up_webform_dir_ggp_form_alter(&$form, \Drupal\Core\Form\Form
     }
   }
 }
-
 
 
 /*Gestion des filtres et affichage sur pages resultats views*/

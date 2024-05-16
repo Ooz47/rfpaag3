@@ -64,7 +64,11 @@ display:flex;
     margin: 0;
 }
 
-.page-no-node .contenuprincipal #block-reseau-content {
+/* .page-no-node .contenuprincipal #block-reseau-content {
     margin-top: -200px;
     padding-top: 200px;
-  }
+  } */
+
+  div#block-reseau-local-tasks {
+    z-index: 999;
+}

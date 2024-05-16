@@ -11,6 +11,8 @@
 #       css/webform-back.css: {}
 
 extra.dirgretagp:
+  js:
+    js/webform-incidents.js: {}
   css:
     theme:
       css/dir_ggp.css: {}
