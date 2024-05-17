@@ -61,11 +61,13 @@ function reseau_mod_up_blog_theme_suggestions_page_alter(array &$suggestions, ar
   $node = \Drupal::routeMatch()->getParameter('node');
   if ($node instanceof \Drupal\node\NodeInterface) {
     //on tcheck si ce champs existe pour pour éviter les page type views 
+    if ($node->hasField('field_structure_associee')) {
     if (!empty($node->get('field_structure_associee')->getValue())) {
       if (\Drupal::theme()->getActiveTheme()->getName() != 'seven') {
 
         $suggestions[] = 'page__' . $node->bundle();
       }
+          }
     }
   }
 }

@@ -1,0 +1,113 @@
+{#
+/**
+ * @file
+ * Theme override for a field.
+ *
+ * To override output, copy the "field.html.twig" from the templates directory
+ * to your theme's directory and customize it, just like customizing other
+ * Drupal templates such as page.html.twig or node.html.twig.
+ *
+ * Instead of overriding the theming for all fields, you can also just override
+ * theming for a subset of fields using
+ * @link themeable Theme hook suggestions. @endlink For example,
+ * here are some theme hook suggestions that can be used for a field_foo field
+ * on an article node type:
+ * - field--node--field-foo--article.html.twig
+ * - field--node--field-foo.html.twig
+ * - field--node--article.html.twig
+ * - field--field-foo.html.twig
+ * - field--text-with-summary.html.twig
+ * - field.html.twig
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the containing element.
+ * - label_hidden: Whether to show the field label or not.
+ * - title_attributes: HTML attributes for the title.
+ * - label: The label for the field.
+ * - multiple: TRUE if a field can contain multiple items.
+ * - items: List of all the field items. Each item contains:
+ *   - attributes: List of HTML attributes for each item.
+ *   - content: The field item's content.
+ * - entity_type: The entity type to which the field belongs.
+ * - field_name: The name of the field.
+ * - field_type: The type of the field.
+ * - label_display: The display settings for the label.
+ *
+ * @see template_preprocess_field()
+ */
+#}
+
+{{ attach_library('reseau_mod_up_session/extra.display') }}
+{%
+  set title_classes = [
+    label_display == 'visually_hidden' ? 'visually-hidden',
+    'label',
+
+  ]
+%}
+
+{%
+  set custom_classes = [
+   field_name, 'field_node_formation',
+  ]
+%}
+
+{%
+  set custom_item_classes = [
+  'accordion-item',
+  ]
+%}
+
+{# {{ kint(entity_type) }} #}
+
+{# {% if label_hidden %}
+  {% if multiple %}
+    <div{{ attributes.addClass(custom_classes) }}>
+      {% for item in items %}
+        <div{{ item.attributes }}>{{ item.content }}</div>
+      {% endfor %}
+    </div>
+  {% else %}
+    {% for item in items %}
+      <div{{ attributes.addClass(custom_classes) }}>{{ item.content }}</div>
+    {% endfor %}
+  {% endif %}
+{% else %} #}
+{# {{ kint(items) }} #}
+	<div{{attributes.addClass(custom_classes)}}><div{{title_attributes.addClass(title_classes)}}>
+	{{ label }}
+	</div>
+		{% if multiple %}
+		<div class="accordion"> {% endif %}
+		{% set nombre_session_publie_avenir = 0 %}
+		{% for item in items %}
+
+
+			{% set date_session = drupal_field('field_sf_date', 'node', item.content['#node'].id) %}
+			{% if ('now'|date('U') < date_session[0]['#value']|date('U')) %}
+				{# {{ kint(item.content['#node'].status.value) }} #}
+
+				<div{{item.attributes.addClass(custom_item_classes)}}>
+					{{ item.content }}
+				{# {{ kint(item.content['#node'].field_sf_date.value) }} #}
+					{# {{ kint(item.content['#node'].id) }} #}
+					{# {{ kint(item.content.node.field_ss_inscription) }} #}
+					{# {{ item.content['field_ss_inscription'] }} #}
+				</div>
+				{% if (item.content['#node'].status.value == 1) %}
+					{% set nombre_session_publie_avenir = nombre_session_publie_avenir + 1 %}
+				{% endif %}
+			{% endif %}
+
+
+		{% endfor %}
+
+			{% if (nombre_session_publie_avenir == 0) %}
+					Informations à venir prochainement
+				{% endif %}
+
+		{% if multiple %}
+		</div>
+	{% endif %}
+</div>
+{# {% endif %} #}

@@ -1,0 +1,180 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\pathauto\Entity\PathautoPattern;
+use Drupal\views\ViewExecutable;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+
+
+function reseau_mod_up_session_page_attachments_alter(array &$attachments)
+{
+
+  /*ajoute css admin*/
+  $admin_theme = \Drupal::config('system.theme')->get('admin');
+  $admin_theme_name = \Drupal::service('theme_handler')->getName($admin_theme);
+  if ($admin_theme_name == 'Seven') {
+    $attachments['#attached']['library'][] = 'reseau_mod_up_session/extra.admin';
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function reseau_mod_up_session_theme()
+{
+
+  $theme['node__session_formation__teaser'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['field__node__full__field_fmt_session'] = [
+    'base hook' => 'field',
+  ];
+
+  $theme['node__lieu_session__teaser'] = [
+    'base hook' => 'node',
+  ];
+  
+  $theme['views_view_field__recherche_formations__nothing'] = [
+    'base hook' => 'views_view_field',
+  ];
+
+  return $theme;
+}
+
+
+//Renseigne valeur par défault du champ structure associée à la création d'un node, en fonction de l'utilisateur courant
+function reseau_mod_up_session_node_field_values_init(\Drupal\Core\Entity\FieldableEntityInterface $entity)
+{
+  $nodetype = array("session_formation");
+  if (in_array($entity->getType(), $nodetype)) {
+    fill_initial_values($entity);
+  }
+}
+
+function reseau_mod_up_session_preprocess_node_add_list(&$variables)
+{
+  // Retire session formation sur page / node/add et dans menu
+  unset($variables['content']['session_formation']);
+  unset($variables['types']['session_formation']);
+}
+
+//Modification des formulaire
+function reseau_mod_up_session_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
+{
+
+  if (($form_id === 'node_session_formation_edit_form') || ($form_id === 'node_session_formation_form')) {
+    if ($form_id === 'node_session_formation_form') {
+      // si n'est pas admin, on bloque l'accès à l'ajout en standalone
+      $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+      if (($current_user->hasRole('administrator')) || ($current_user->id() == '1')) {
+      } else {
+        throw new AccessDeniedHttpException();
+      }
+    }
+
+    if ($form_id === 'node_session_formation_edit_form') {
+      $form['revision']['#access'] = FALSE;
+      $form['revision_log']['#access'] = FALSE;
+    }
+
+    $form['status']['#access'] = TRUE;
+    $form['created']['#access'] = TRUE;
+
+    if (isset($form['simple_sitemap_index_now'])) {
+      $form['simple_sitemap_index_now']['#access'] = FALSE;
+    }
+
+    /* Retire option réseau dans structure concernée */
+    if (isset($form['field_structure_associee']['widget'])) {
+      unset($form['field_structure_associee']['widget']['#options']['8']);
+    }
+
+    if (\Drupal::currentUser()->hasPermission('modifier structure associee')) {
+      return;
+    }
+
+    get_autorisation_access();
+
+    $form['field_structure_associee']['widget']['#disabled'] = TRUE;
+  }
+
+
+
+  /* Gestion delete */
+  $nodetype = array(
+    "node_session_formation_delete_form",
+  );
+
+  if (in_array($form_id, $nodetype)) {
+    get_autorisation_access();
+
+    // if (isset($form['index_now'])) {
+    //   $form['index_now']['#access'] = FALSE;
+    // }
+    if (isset($form['simple_sitemap_index_now'])) {
+      $form['simple_sitemap_index_now']['#access'] = FALSE;
+    }
+  }
+}
+
+
+
+/**
+ * Perform alterations before an entity form is included in the IEF widget.
+ *
+ * @param array $entity_form
+ *   Nested array of form elements that comprise the entity form.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state of the parent form.
+ */
+function reseau_mod_up_session_inline_entity_form_entity_form_alter(array &$entity_form, FormStateInterface &$form_state)
+{
+  if ($entity_form['#entity_type'] == 'node') {
+    if (($entity_form['#bundle'] == 'session_formation')) {
+
+      $text_help = "L'intitulé ne s'affiche pas côté public. Il sert à faciliter la gestion côté administrateur.<br/>
+      Ex: DWWM Septembre 2024";
+      $entity_form['title']['widget'][0]['value']['#description'] =  \Drupal\Core\Field\FieldFilteredMarkup::create($text_help);
+
+      get_autorisation_access();
+      // $entity_form['status']['#access'] = TRUE;
+
+      //si autre que aadmin, webmster on disable modification de la structure
+      $current_user = \Drupal::entityTypeManager()->getStorage('user')->load(\Drupal::currentUser()->id());
+
+      if (($current_user->hasRole('administrator')) || ($current_user->hasRole('webmaster_reseau')) || ($current_user->id() == '1')) {
+        unset($entity_form['field_structure_associee']['widget']['#options']['8']);
+
+        if ($form_state->getFormObject()->getOperation() == 'edit') {
+          $entity_form['field_structure_associee']['widget']['#disabled'] = TRUE;
+        }
+      } else {
+        $entity_form['field_structure_associee']['widget']['#disabled'] = TRUE;
+      }
+    }
+  }
+}
+
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ *
+ * Add views field template suggestions.
+ * 
+ * @inheritdoc
+ */
+function reseau_mod_up_session_theme_suggestions_views_view_field(array $variables) {
+
+  if ($variables['view']->id() == 'recherche_formations') {
+    // dsm($variables['field']->field);
+  if ($variables['field']->field == 'nothing') {
+ 
+  return [
+    'views_view_field__' . $variables['view']->id() .'__'.$variables['field']->field
+  ];
+}
+
+
+}
+}

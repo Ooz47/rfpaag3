@@ -1,0 +1,85 @@
+{#
+/**
+ * @file
+ * Theme override for a single field in a view.
+ *
+ * Available variables:
+ * - view: The view that the field belongs to.
+ * - field: The field handler that can process the input.
+ * - row: The raw result of the database query that generated this field.
+ * - output: The processed output that will normally be used.
+ *
+ * When fetching output from the row this construct should be used:
+ * data = row[field.field_alias]
+ *
+ * The above will guarantee that you'll always get the correct data, regardless
+ * of any changes in the aliasing that might happen if the view is modified.
+ *
+ * @see template_preprocess_views_view_field()
+ */
+#}
+{%
+  set custom_item_classes = [
+
+  ]
+%}
+
+{# {% if (row._entity.field_fmt_session.value >= 1) %} #}
+{% if row._entity.field_fmt_session.value is not empty %}
+
+	{% set items = row._entity.field_fmt_session.value %}
+	{# {% set nombre_session_publie_avecdatedefindansmoinsdequinzejours = 0 %} #}
+	{# {{ kint(row._entity.field_fmt_session.value) }} #}
+	{% for item in items %}
+		{# {{ kint(item) }} #}
+
+		{% set entity = drupal_entity('node', item.target_id,'teaser') %}
+	
+		{# {{ kint(statut['#cache']) }} #}
+			{% if (entity['#node'].status.value == 1) %}
+			{% set date_inscription = drupal_field('field_sf_inscription', 'node', item.target_id) %}
+				{% if ('now'|date('U') > date_inscription[0]['#end_value']|date_modify("-15 day")|date('U')) %}
+{# {{ kint('fin') }} #}
+				{% set custom_item_classes = custom_item_classes|merge({ 'fin': 'fin-inscription' }) %}
+			{# {% set nombre_session_publie_avenir = nombre_session_publie_avenir + 1 %} #}
+		{% endif %}
+	{% endif %}
+{% endfor %}
+{% endif %}
+
+	{# {{ kint(row._entity) }} #}
+{% if row._entity.created.value is not empty %}
+
+			{% set date_creation = row._entity.created.value  %}
+
+			{# Si la formation a moins de 6 mois #}
+				{% if ('now'|date('U') < date_creation|date_modify("+180 day")|date('U')) %}
+{# {{ kint('nouvelle') }} #}
+				{% set custom_item_classes = custom_item_classes|merge({ 'creation': 'nouvelle-formation' }) %}
+		{% endif %}
+{% endif %}
+
+
+{% if row._entity.field_fmt_session.value is not empty %}
+
+	{% set items = row._entity.field_fmt_session.value %}
+	{# {% set nombre_session_publie_creesmoinsdequinzejours = 0 %} #}
+	{# {{ kint(row._entity.field_fmt_session.value) }} #}
+	{% for item in items %}
+		{# {{ kint(item) }} #}
+
+		{% set entity = drupal_entity('node', item.target_id,'teaser') %}
+	
+		{# {{ kint(entity['#node'].created.value) }} #}
+			{% if (entity['#node'].status.value == 1) %}
+			{# {% set date_inscription = drupal_field('field_sf_inscription', 'node', item.target_id) %} #}
+				{% if ('now'|date('U') < entity['#node'].created.value|date_modify("+15 day")|date('U')) %}
+{# {{ kint('session') }} #}
+				{% set custom_item_classes = custom_item_classes|merge({ 'nvelle-session': 'nouvelle-session' }) %}
+			{# {% set nombre_session_publie_avenir = nombre_session_publie_avenir + 1 %} #}
+		{% endif %}
+	{% endif %}
+{% endfor %}
+{% endif %}
+
+<div{{attributes.addClass(custom_item_classes)}}>{{ output -}}</div>

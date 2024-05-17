@@ -3405,13 +3405,119 @@ body.page-node-formation {
       .groupe-resultats {
         background: $grisclair;
 
-        .row {
+        &>.row {
           @include transition(background, 0.3s ease);
           color: $noirpolice;
           align-items: center;
 
+          border-bottom: 5px solid $grisblanc;
+.views-field-nothing {
+  a.row {
+    align-items: center;
+  }
+  span {
+    &>div {
+      .infos {
+     
+        display: block;
+       .fin-ins, .nvelle-form,.nvelle-session {
+        position: relative;
+         display: none;
+    padding: 6px;
+    border-radius: 6px;
+    line-height: 1;
+    color: $blanc;
+         &::before {
+          display: inline-block;
+          font-family: "Font Awesome 5 Free";
+          font-weight: 600;
+        }
+        .tooltip-text {
+          @include transition(all, 0.3s ease);
+          visibility: hidden;
+          position: absolute;
+          z-index: 1;
+          opacity: 0;
+          // width: 100px;
+          // width: 0;
+          width: max-content;
+          color: white;
+          font-size: 13px;
+          line-height: 1.3;
+          border-radius: 6px;
+          padding: 5px 6px;
+          top: 0px;
+          left: 24px;
+        }
+        &:hover .tooltip-text {
+          visibility: visible;
+          opacity: 1;
+          // width: max-content;
+        }
+       }
+       .fin-ins {
+         background: $dgrd2;
+
+         &::before {
+          content: "\f253";
+        }
+        .tooltip-text {
+          background-color: $dgrd2;
+        }
+       }
+       .nvelle-form {
+        background: $dgrd3;
+
+        &::before {
+        //  content: "\f055";
+         content: "\f15c";
+         font-weight: 400;
+       }
+       .tooltip-text {
+         background-color: $dgrd3;
+       }
+      }
+      .nvelle-session {
+        background: $dgrd4;
+
+        &::before {
+         content: "\f073";
+        font-weight: 400;
+       }
+       .tooltip-text {
+         background-color: $dgrd4;
+         left: 26px;
+       }
+      }
+      }
+
+      &.fin-inscription {
+        .infos {
+          .fin-ins {
+            display: inline-block;
+          }
+         } 
+      }
+      &.nouvelle-formation {
+        .infos {
+          .nvelle-form {
+            display: inline-block;
+          }
+         } 
+      }
+      &.nouvelle-session {
+        .infos {
+          .nvelle-session {
+            display: inline-block;
+          }
+         } 
+      }
+     }
+  } 
+}
           .titre {
             display: block;
+            color: $noirpolice;
           }
 
           .structure {

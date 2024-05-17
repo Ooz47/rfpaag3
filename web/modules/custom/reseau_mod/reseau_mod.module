@@ -229,7 +229,7 @@ function fill_initial_values($entity)
           if (!empty($node->get('field_structure_associee')->getValue())) {
             $terms = $node->get('field_structure_associee')->getValue();
             if ($entity->getEntityTypeId() == 'node') {
-              if (($entity->getType() == 'contact') || ($entity->getType() == 'bloc_reutilisable')) {
+              if (($entity->getType() == 'contact') || ($entity->getType() == 'bloc_reutilisable') || ($entity->getType() == 'session_formation')) {
                 $entity->field_structure_associee->target_id = $terms[0]['target_id'];
               }
             } elseif ($entity->getEntityTypeId() == 'media') {
@@ -1219,7 +1219,7 @@ function reseau_mod_preprocess_responsive_image(&$variables) {
 //Rend ccessible les contenus non publiés aux user associé à la structure du contenu non publié
 function reseau_mod_node_access(EntityInterface $entity, $operation, AccountInterface $account) {
   if ($operation =="view") {
-    
+    if ($entity->hasField('field_structure_associee')) {
   if (!empty($entity->get('field_structure_associee')->getValue())) {
 
     $current_user = \Drupal::entityTypeManager()->getStorage('user')->load($account->id());
@@ -1232,6 +1232,7 @@ function reseau_mod_node_access(EntityInterface $entity, $operation, AccountInte
       if ( $current_user->hasRole('webmaster_reseau')) {
         return AccessResult::allowed();
       }
+    }
       }
     }
   }

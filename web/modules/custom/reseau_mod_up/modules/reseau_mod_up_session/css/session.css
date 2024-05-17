@@ -1,0 +1,57 @@
+/* body.page-node-page_de_blog .breadcrumb .container-xl,
+body.page-node-page_de_blog main .container-xl
+ {
+  max-width:740px;
+}
+
+body.page-node-page_de_blog main h1, body.page-node-page_de_blog main .h1 {
+  margin: 0 0 3rem 0;
+
+}
+body.page-node-page_de_blog main h1::before, body.page-node-page_de_blog main .h1::before {
+display:none;
+
+} */
+
+.field_fmt_session {
+  margin-bottom: 3rem;
+}
+
+
+.field_fmt_session .accordion-button::before {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  margin: 0 10px 0 0;
+  content: "\f073";
+  /* content: "\f133"; */
+  color: #009e99;
+}
+.field_fmt_session .accordion-body > div {
+  margin-bottom: 1rem;
+}
+.date-inscription > div:first-child::before {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  margin: 0 10px 0 0;
+  content: "\f0da";
+  /* content: "\f133"; */
+  color: #009e99;
+  font-weight:600;
+}
+
+.lieu-session > div:first-child::before,.infos-complementaires > div:first-child::before {
+  font-family: "Font Awesome 5 Free";
+  display: inline-block;
+  margin: 0 10px 0 0;
+  content: "\f0da";
+  /* content: "\f133"; */
+  color: #009e99;
+  font-weight:600;
+}
+
+.lieu-session > div:first-child,
+.infos-complementaires > div:first-child,
+.date-inscription > div:first-child {
+  font-weight: 600;
+}
+
