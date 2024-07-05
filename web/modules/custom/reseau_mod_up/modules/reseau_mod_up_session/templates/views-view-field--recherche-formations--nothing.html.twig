@@ -35,10 +35,17 @@
 
 		{% set entity = drupal_entity('node', item.target_id,'teaser') %}
 	
-		{# {{ kint(statut['#cache']) }} #}
+		{# {{ kint('now'|date('d/m/Y')) }} #}
+		{# {{ kint(date_inscription) }} #}
+		{# {{ kint(entity['#node'].field_sf_inscription[0].end_value|date('d/m/Y')) }} #}
+		{# {{ kint(entity['#node'].field_sf_inscription[0].end_value|date_modify("-30 day")|date('d/m/Y')) }} #}
+		{# {{ kint(date_inscription[0]['#end_value']|date('d/m/Y')) }} #}
+		{# {{ kint(date_inscription[0]['#end_value']|date_modify("-30 day")|date('d/m/Y')) }} #}
 			{% if (entity['#node'].status.value == 1) %}
-			{% set date_inscription = drupal_field('field_sf_inscription', 'node', item.target_id) %}
-				{% if ('now'|date('U') > date_inscription[0]['#end_value']|date_modify("-15 day")|date('U')) %}
+			{# {% set date_inscription = drupal_field('field_sf_inscription', 'node', item.target_id) %} #}
+			{# {{ kint(date_inscription[0]['#end_value']) }} #}
+					{# {{ kint(date_inscription[0]['#end_value']|date('d/m/Y')) }} #}
+				{% if ('now'|date('U') > entity['#node'].field_sf_inscription[0].end_value|date_modify("-30 day")|date('U')) %}
 {# {{ kint('fin') }} #}
 				{% set custom_item_classes = custom_item_classes|merge({ 'fin': 'fin-inscription' }) %}
 			{# {% set nombre_session_publie_avenir = nombre_session_publie_avenir + 1 %} #}
@@ -73,7 +80,7 @@
 		{# {{ kint(entity['#node'].created.value) }} #}
 			{% if (entity['#node'].status.value == 1) %}
 			{# {% set date_inscription = drupal_field('field_sf_inscription', 'node', item.target_id) %} #}
-				{% if ('now'|date('U') < entity['#node'].created.value|date_modify("+15 day")|date('U')) %}
+				{% if ('now'|date('U') < entity['#node'].created.value|date_modify("+30 day")|date('U')) %}
 {# {{ kint('session') }} #}
 				{% set custom_item_classes = custom_item_classes|merge({ 'nvelle-session': 'nouvelle-session' }) %}
 			{# {% set nombre_session_publie_avenir = nombre_session_publie_avenir + 1 %} #}

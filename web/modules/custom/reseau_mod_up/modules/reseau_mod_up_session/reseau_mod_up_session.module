@@ -27,6 +27,10 @@ function reseau_mod_up_session_theme()
     'base hook' => 'node',
   ];
 
+  $theme['node__session_formation__default'] = [
+    'base hook' => 'node',
+  ];
+
   $theme['field__node__full__field_fmt_session'] = [
     'base hook' => 'field',
   ];
