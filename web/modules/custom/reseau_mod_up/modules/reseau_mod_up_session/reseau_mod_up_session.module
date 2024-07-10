@@ -35,6 +35,10 @@ function reseau_mod_up_session_theme()
     'base hook' => 'field',
   ];
 
+  $theme['field__field_fmt_session__export_pdf'] = [
+    'base hook' => 'field',
+  ];
+
   $theme['node__lieu_session__teaser'] = [
     'base hook' => 'node',
   ];
@@ -66,7 +70,10 @@ function reseau_mod_up_session_preprocess_node_add_list(&$variables)
 //Modification des formulaire
 function reseau_mod_up_session_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id)
 {
-
+  if (($form_id === 'node_formation_edit_form') || ($form_id === 'node_formation_form')) {
+  // dsm($form_id);
+  $form['field_dates_previsionnelle']['widget']['#disabled'] = TRUE;
+  }
   if (($form_id === 'node_session_formation_edit_form') || ($form_id === 'node_session_formation_form')) {
     if ($form_id === 'node_session_formation_form') {
       // si n'est pas admin, on bloque l'accès à l'ajout en standalone

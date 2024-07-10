@@ -156,6 +156,19 @@ function reseau_preprocess_node(&$variables)
       $variables['content']['field_public_cible_complement']['#title'] = "Public cible";
       $variables['content']['field_public_cible_complement']['#label_display'] = 'above';
       }
+      if ( $node->hasField('field_certif_visee_libelle') && !$node->get('field_certif_visee_libelle')->isEmpty() ) {
+        $variables['content']['field_certif_visee_libelle']['#title'] = "Certification visée";
+      } else {
+
+
+      }
+  //     if ( $node->hasField('field_fmt_session') && $node->get('field_fmt_session')->isEmpty() ) {
+  //       $variables['content']['field_fmt_session']['#markup'] = "<div style=\"margin-bottom: 3rem;\" class=\"field_fmt_session field_node_formation\"><div class=\"label\">
+	// Dates prévisionnelles et délais d’accès	</div><div class=\"accordion\">	À définir - veuillez nous contacter	</div></div>";
+  //     } else {
+   
+  //     }
+
       // dsm($node->nid->value);
       // if (($node->nid->value == '531') || ($node->nid->value == '268')) {
       // if ($node->hasField('field_fmt_image') && !$node->get('field_fmt_image')->isEmpty()) {

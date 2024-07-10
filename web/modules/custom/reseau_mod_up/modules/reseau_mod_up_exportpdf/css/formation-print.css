@@ -144,6 +144,30 @@ h1,h2,h3,h4,h5,h6 {
   clear: both;
 }
 
+.field_fmt_session .date-session  {
+  font-weight: bold;
+  /* margin-left: 12px; */
+  /* display: inline-block; */
+}
+
+/* .field_fmt_session .accordion-item:not(:first-child)  {
+margin-top:10px;
+} */
+
+.field_fmt_session .accordion-item  {
+  margin-bottom:10px;
+  }
+
+.field_fmt_session ul,
+.field_fmt_session li
+  {
+    margin: 0;
+    padding: 0;
+  /* font-weight: bold; */
+  margin-left: 8px;
+  /* display: inline-block; */
+}
+
 .field_node_formation..field_heures_en_centre div p,
 .field_node_formation..field_heures_en_entreprise div p {
   /* margin: 0; */

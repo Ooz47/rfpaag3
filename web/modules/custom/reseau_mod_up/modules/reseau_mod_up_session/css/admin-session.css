@@ -1,3 +1,8 @@
 .field--name-field-fmt-session #inline-entity-form-field_fmt_session-form fieldset > div > div > input:last-child{
     display: none;
 }
+
+div.field--name-field-dates-previsionnelle  {
+    opacity: .5;
+    display: none;
+}
