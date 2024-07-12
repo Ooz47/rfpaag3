@@ -261,6 +261,19 @@ function reseau_mod_up_webform_theme()
   $theme['field__node__cfapag_field_fmt_candidature'] = [
     'base hook' => 'field',
   ];
+
+  $theme['field__node__cfasbh_field_fmt_candidature'] = [
+    'base hook' => 'field',
+  ];
+
+  $theme['webform_submission__contact_cfasbh'] = [
+    'base hook' => 'node',
+  ];
+
+  $theme['webform_submission_form__contact_cfasbh'] = [
+    'base hook' => 'node',
+  ];
+
   return $theme;
 }
 
@@ -285,15 +298,16 @@ function reseau_mod_up_webform_theme_suggestions_field_alter(array &$suggestions
       $element = $variables['element'];
       if ($element['#field_name'] == 'field_fmt_candidature') {
       if ($element['#object']->get('field_structure_associee')->target_id == '1') {
-        // dsm($element['#object']->get('field_structure_associee')->target_id);
-        // dsm($element->get('nid'));
         $suggestions[] = 'field__node__gretagp_field_fmt_candidature';
-      //   $suggestions[] = 'field__node__title__page_private_' . $element['#view_mode'];
       }
 
       if ($element['#object']->get('field_structure_associee')->target_id == '4') {
-        // dsm($element['#object']->get('field_structure_associee')->target_id);
         $suggestions[] = 'field__node__cfapag_field_fmt_candidature';
+      }
+
+      if ($element['#object']->get('field_structure_associee')->target_id == '5') {
+        // dsm($element['#object']->get('field_structure_associee')->target_id);
+        $suggestions[] = 'field__node__cfasbh_field_fmt_candidature';
       }
       }
     }
@@ -309,14 +323,14 @@ function reseau_mod_up_webform_page_attachments_alter(array &$attachments)
     $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.webform';
   }
 
-  $webform = \Drupal::routeMatch()->getParameter('webform');
-  if ($webform instanceof \Drupal\webform\WebformInterface) {
+  // $webform = \Drupal::routeMatch()->getParameter('webform');
+  // if ($webform instanceof \Drupal\webform\WebformInterface) {
 
-    if ($webform->get('id') == 'pre_inscription_cfapag') {
+  //   if ($webform->get('id') == 'pre_inscription_cfapag') {
     
-      $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.cfapag';
-    }
-  }
+  //     $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.cfapag';
+  //   }
+  // }
 
 
   $attachments['#attached']['library'][] = 'reseau_mod_up_webform/extra.webformcustom';
@@ -338,6 +352,7 @@ function reseau_mod_up_webform_entity_operation_alter(array &$operations, \Drupa
     if (($entity->get('webform_id')->entity->get('id') == 'contact_greta_cfa_de_la_guadelou') 
     || ($entity->get('webform_id')->entity->get('id') == 'contact_cfapag') 
     || ($entity->get('webform_id')->entity->get('id') == 'contact_greta_cfa_sxmsbh') 
+    || ($entity->get('webform_id')->entity->get('id') == 'contact_cfasbh') 
   ) {
 
       if (isset($operations['resend'])) {
@@ -571,6 +586,35 @@ if ($submission->get('webform_id')->entity->get('id') == 'contact_greta_cfa_sxms
     ];
   }
 }
+
+/* POUR FORMULAIRE CONTACT CFASBH */
+if ($submission->get('webform_id')->entity->get('id') == 'contact_cfasbh') {
+
+  if ($submission->getElementData('statut') !== 'Traité') {
+
+    $operations['traite'] = [
+      'title' => t('Marquer comme Traité'),
+      'weight' => 15,
+      'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquertraite', [
+        'submission' => $submission->id(),
+      ], [
+        'query' => \Drupal::destination()->getAsArray(),
+      ]),
+    ];
+  }
+  if ($submission->getElementData('statut') !== 'En cours') {
+    $operations['encours'] = [
+      'title' => t('Marquer comme en cours'),
+      'weight' => 15,
+      'url' => Url::fromRoute('reseau_mod_up_webform.webform_submission_marquerencours', [
+        'submission' => $submission->id(),
+      ], [
+        'query' => \Drupal::destination()->getAsArray(),
+      ]),
+    ];
+  }
+}
+
   }
 
   return $operations;
