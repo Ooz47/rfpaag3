@@ -84,7 +84,10 @@
 
 
 			{% set date_session = drupal_field('field_sf_date', 'node', item.content['#node'].id) %}
-			{% if ('now'|date('U') < date_session[0]['#value']|date('U')) %}
+			{# {{ kint(date_session[0]['#end_value']|date('U')) }} #}
+{# {{ kint(date_session[0]['#value']|date('U')) }} #}
+			{% if ('now'|date('U') < date_session[0]['#end_value']|date('U')) %}
+			{% if (date_session[0]['#value']|date('U') != date_session[0]['#end_value']|date('U')) %}
 				{# {{ kint(item.content['#node'].status.value) }} #}
 
 				<div{{item.attributes.addClass(custom_item_classes)}}>
@@ -97,6 +100,7 @@
 				{% if (item.content['#node'].status.value == 1) %}
 					{% set nombre_session_publie_avenir = nombre_session_publie_avenir + 1 %}
 				{% endif %}
+			{% endif %}
 			{% endif %}
 
 

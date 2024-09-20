@@ -92,10 +92,14 @@
 		{% set test = drupal_field('field_sf_date', 'node', node.id) %}
 
   
-
+        	{% if (('now'|date('U') < test[0]['#end_value']|date('U')) and ('now'|date('U') > test[0]['#value']|date('U'))) %}
+					{% set etat = "[En cours]" %}
+          {% else %}
+          {% set etat = "" %}
+				{% endif %}
        <h4 class="accordion-header" id="heading{{ node.id }}">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#item{{ node.id }}"  aria-expanded="false" aria-controls="item{{ node.id }}">
-         {{content['field_sf_date']}}
+         {{content['field_sf_date']}} <span style="font-size: .8rem;margin-left: 1rem;font-style: italic;">{{ etat }}</span>
          
   {% if not node.isPublished %}
 <div class="non-publie" style="margin-left: 20px;" role="alert">
