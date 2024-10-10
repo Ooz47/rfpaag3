@@ -1860,6 +1860,17 @@ body.page-node-page_de_blog .actualites-view header
   }
 }
 
+body.page-node-structure3 .resultats .row .views-field-nothing,
+body.page-node-structure3 .resultats .row .views-field-nothing-2 {
+  display:none;
+}
+body.page-node-structure3 .resultats .row.justify-content-lg-between {
+justify-content: center!important;
+}
+body.page-node-structure3 .resultats .row.gap-1 {
+  gap: 2.25rem !important;
+  }
+
 .resultats {
 
     // background: $grisclair;
