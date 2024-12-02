@@ -1860,16 +1860,31 @@ body.page-node-page_de_blog .actualites-view header
   }
 }
 
-body.page-node-structure3 .resultats .row .views-field-nothing,
-body.page-node-structure3 .resultats .row .views-field-nothing-2 {
-  display:none;
-}
-body.page-node-structure3 .resultats .row.justify-content-lg-between {
+body.page-node-structure .resultats .row.justify-content-lg-between.nbreResultats-1,
+body.page-node-structure .resultats .row.justify-content-lg-between.nbreResultats-2,
+body.page-node-structure .resultats .row.justify-content-lg-between.nbreResultats-3,
+body.page-node-structure .resultats .row.justify-content-lg-between.nbreResultats-4,
+ {
 justify-content: center!important;
 }
-body.page-node-structure3 .resultats .row.gap-1 {
-  gap: 2.25rem !important;
+body.page-node-structure .resultats .row.gap-1.nbreResultats-1,
+body.page-node-structure .resultats .row.gap-1.nbreResultats-2,
+body.page-node-structure .resultats .row.gap-1.nbreResultats-3,
+body.page-node-structure .resultats .row.gap-1.nbreResultats-4,
+ {
+  gap: 3rem !important;
   }
+
+// body.page-node-structure3 .resultats .row .views-field-nothing,
+// body.page-node-structure3 .resultats .row .views-field-nothing-2 {
+//   display:none;
+// }
+// body.page-node-structure3 .resultats .row.justify-content-lg-between {
+// justify-content: center!important;
+// }
+// body.page-node-structure3 .resultats .row.gap-1 {
+//   gap: 2.25rem !important;
+//   }
 
 .resultats {
 
@@ -1925,7 +1940,7 @@ body.page-node-structure3 .resultats .row.gap-1 {
       }
     }
 
-    .views-field-nothing {
+    .views-field-nothing, .views-field-field-taux-de-reussite {
       background: $dgrd1;
 
       .icone {
@@ -1942,7 +1957,7 @@ body.page-node-structure3 .resultats .row.gap-1 {
       }
     }
 
-    .views-field-nothing-1 {
+    .views-field-nothing-1, .views-field-field-taux-de-satisfaction  {
       background: $dgrd2;
 
       .icone {
@@ -1950,7 +1965,7 @@ body.page-node-structure3 .resultats .row.gap-1 {
       }
     }
 
-    .views-field-nothing-2 {
+    .views-field-nothing-2, .views-field-field-taux-insertion  {
       background: $dgrd3;
 
       .icone {

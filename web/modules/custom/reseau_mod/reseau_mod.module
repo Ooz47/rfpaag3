@@ -329,6 +329,98 @@ function reseau_mod_views_pre_view(ViewExecutable $view, $display_id, array &$ar
 }
 }
 
+/* Modification des résultats */
+/* Résultats structures */
+function reseau_mod_views_pre_render(ViewExecutable $view) {
+  if ($view->id() == 'resultats' && $view->current_display =="block_2") {
+    $champs = ['field_taux_de_reussite', 'field_taux_de_satisfaction', 'field_taux_insertion', 'field_candidats_vae', 'field_stagiaires'];
+    $nbreResultats = 5;
+    foreach ($champs as $key => $value) {
+  // On retire le bloc si résultats == 0
+
+    if(($view->result[0]->_relationship_entities['field_resultats']->$value->value == '0') || ($view->result[0]->_relationship_entities['field_resultats']->$value->value == '0.00')){
+      $view->field[$value]->options['exclude'] = TRUE;
+      // dsm($view->result[0]->_relationship_entities['field_resultats']->$value->value );
+      $nbreResultats --;
+    }
+ 
+    }
+    // On ajoute une class avec le nombre de blocs
+    $class = $view->style_plugin->options['row_class'] . ' nbreResultats-'.$nbreResultats;
+    $view->style_plugin->options['row_class'] = $class;
+  }
+
+  /* Résultats accueil */
+  if ($view->id() == 'resultats' && $view->current_display =="block_1") {
+    // dsm($view);
+    $champs = ['field_taux_de_reussite', 'field_taux_de_satisfaction', 'field_taux_insertion', 'field_candidats_vae', 'field_stagiaires'];
+   $resultats =[];
+
+   // on crée tableau comprenant tous les résultats
+   foreach ($champs as $key => $value) {
+    $resultats[$value] = [];
+    foreach ($view->result as $key => $resultat) {       
+        $resultats[$value][] =$resultat->_relationship_entities['field_resultats']->$value->value;
+      }
+      }
+      // dsm($resultats);
+
+      $resultats_final = calculStatistiques($resultats);
+
+    // On insère les moyenne calculée dans la premiere ligne de resultat
+    $view->result[0]->_relationship_entities['field_resultats']->field_taux_de_reussite->value = $resultats_final['moyenne_taux_de_reussite'];
+    $view->result[0]->_relationship_entities['field_resultats']->field_taux_de_satisfaction->value = $resultats_final['moyenne_taux_de_satisfaction'];
+    $view->result[0]->_relationship_entities['field_resultats']->field_taux_insertion->value = $resultats_final['moyenne_taux_insertion'];
+    $view->result[0]->_relationship_entities['field_resultats']->field_candidats_vae->value = $resultats_final['sum_candidats_vae'];
+    $view->result[0]->_relationship_entities['field_resultats']->field_stagiaires->value = $resultats_final['sum_stagiaires'];
+    // dsm($view->result[0]->_relationship_entities['field_resultats']->field_taux_de_reussite->value);
+
+    //On retire les autres éléments 
+    array_splice( $view->result, 1);
+  }
+}
+
+function calculStatistiques($resultats) {
+    // Extraction des tableaux depuis le tableau global $resultats
+    $field_taux_de_reussite = $resultats['field_taux_de_reussite'];
+    $field_taux_de_satisfaction = $resultats['field_taux_de_satisfaction'];
+    $field_taux_insertion = $resultats['field_taux_insertion'];
+    $field_candidats_vae = $resultats['field_candidats_vae'];
+    $field_stagiaires = $resultats['field_stagiaires'];
+
+    // Calcul de la somme des candidats VAE et des stagiaires
+    $sum_candidats_vae = array_sum($field_candidats_vae);
+    $sum_stagiaires = array_sum($field_stagiaires);
+
+    // Fonction pour calculer la moyenne en excluant les valeurs 0.00
+    function calculMoyenne($array) {
+        $sum = 0;
+        $count = 0;
+        foreach ($array as $value) {
+            if ($value != 0.00) {
+                $sum += $value;
+                $count++;
+            }
+        }
+        return ($count > 0) ? $sum / $count : 0;
+    }
+
+    // Calcul des moyennes
+    $moyenne_taux_de_reussite = round(calculMoyenne($field_taux_de_reussite));
+    $moyenne_taux_de_satisfaction = round(calculMoyenne($field_taux_de_satisfaction));
+    $moyenne_taux_insertion = round(calculMoyenne($field_taux_insertion));
+
+    // Retourner les résultats sous forme de tableau
+    return [
+        'sum_candidats_vae' => $sum_candidats_vae,
+        'sum_stagiaires' => $sum_stagiaires,
+        'moyenne_taux_de_reussite' => $moyenne_taux_de_reussite,
+        'moyenne_taux_de_satisfaction' => $moyenne_taux_de_satisfaction,
+        'moyenne_taux_insertion' => $moyenne_taux_insertion
+    ];
+}
+
+
 /*WIP: modifier lien edit/delete de media sur vue media grid */
 function reseau_mod_preprocess_views_view_field(&$variables)
 {
